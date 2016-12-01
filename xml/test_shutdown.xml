@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T08:40:51.678" OnError="Continue">
+
+ <!-- disable command(s) -->
+ <ocs:genericCommandSequence>
+  <ocs:disable Entity="AuxiliaryMount"/>
+  <ocs:disable Entity="Camera"/>
+  <ocs:disable Entity="LSSTMount"/>
+ </ocs:genericCommandSequence>
+
+ <!-- synchronization point -->
+ <ocs:scriptCommandSequence>
+  <ocs:waitForEvents Timeout="120">
+   <ocs:Events>auxiliaryMountDisabled,cameraDisabled,LSSTMountDisabled</ocs:Events>
+  </ocs:waitForEvents>
+ </ocs:scriptCommandSequence>
+
+ <!-- standby command(s) -->
+ <ocs:genericCommandSequence>
+  <ocs:standby Entity="AuxiliaryMount"/>
+  <ocs:standby Entity="Camera"/>
+  <ocs:standby Entity="LSSTMount"/>
+ </ocs:genericCommandSequence>
+
+ <!-- synchronization point -->
+ <ocs:scriptCommandSequence>
+  <ocs:waitForEvents Timeout="120">
+   <ocs:Events>auxiliaryMountStandby,cameraStandby,LSSTMountStandby</ocs:Events>
+  </ocs:waitForEvents>
+ </ocs:scriptCommandSequence>
+
+ <!-- exitcontrol command(s) -->
+ <ocs:genericCommandSequence>
+  <ocs:exitcontrol Entity="AuxiliaryMount"/>
+  <ocs:exitcontrol Entity="Camera"/>
+  <ocs:exitcontrol Entity="LSSTMount"/>
+ </ocs:genericCommandSequence>
+
+ <!-- synchronization point -->
+ <ocs:scriptCommandSequence>
+  <ocs:waitForEvents Timeout="120">
+   <ocs:Events>auxiliaryMountOffline,cameraOffline,LSSTMountOffline</ocs:Events>
+  </ocs:waitForEvents>
+ </ocs:scriptCommandSequence>
+
+</ocs:ocsCommandSequence>

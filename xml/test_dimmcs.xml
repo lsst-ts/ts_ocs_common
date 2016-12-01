@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T09:20:21.345" OnError="Abort">
+ <ocs:calibrationCommandSequence>
+
+  <!-- dimmcsEnclosure command test -->
+  <ocs:dimmcsEnclosure Entity="DIMM">
+   <ocs:Position>Open</ocs:Position>
+  </ocs:dimmcsEnclosure>
+
+  <!-- dimmcsTakeImages command test -->
+  <ocs:dimmcsTakeImages Entity="DIMM">
+   <ocs:ExposureTime>15.0</ocs:ExposureTime>
+   <ocs:Frequency>10.0</ocs:Frequency>
+  </ocs:dimmcsTakeImages>
+
+  <!-- dimmcsTarget command test -->
+  <ocs:dimmcsTarget Entity="DIMM">
+   <ocs:Altitude>45.6</ocs:Altitude>
+   <ocs:Azimuth>99.9</ocs:Azimuth>
+  </ocs:dimmcsTarget>
+
+ </ocs:calibrationCommandSequence>
+</ocs:ocsCommandSequence>

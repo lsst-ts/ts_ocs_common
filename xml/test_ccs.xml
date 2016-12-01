@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T09:20:21.345" OnError="Abort">
+ <ocs:cameraCommandSequence>
+
+  <!-- ccsInitGuiders command test -->
+  <ocs:ccsInitGuiders Entity="Camera">
+   <ocs:RoiSpec>placeholder</ocs:RoiSpec>
+  </ocs:ccsInitGuiders>
+
+  <!-- ccsInitImage command test -->
+  <ocs:ccsInitImage Entity="Camera">
+   <ocs:DeltaTime>12.2</ocs:DeltaTime>
+  </ocs:ccsInitImage>
+
+  <!-- ccsSetFilter command test -->
+  <ocs:ccsSetFilter Entity="Camera">
+   <ocs:Name>g</ocs:Name>
+  </ocs:ccsSetFilter>
+
+  <!-- ccsTakeImages command test -->
+  <ocs:ccsTakeImages Entity="Camera">
+   <ocs:NumberOfImages>2</ocs:NumberOfImages>
+   <ocs:ExposureTime>15.0</ocs:ExposureTime>
+   <ocs:ShutterCondition>true</ocs:ShutterCondition>
+   <ocs:ScienceReadout>true</ocs:ScienceReadout>
+   <ocs:GuiderReadout>false</ocs:GuiderReadout>
+   <ocs:WfsReadout>false</ocs:WfsReadout>
+   <ocs:ImageSequenceName>pndTestData</ocs:ImageSequenceName>
+  </ocs:ccsTakeImages>
+
+ </ocs:cameraCommandSequence>
+</ocs:ocsCommandSequence>

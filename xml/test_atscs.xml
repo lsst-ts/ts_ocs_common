@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T09:20:21.345" OnError="Abort">
+ <ocs:calibrationCommandSequence>
+
+  <!-- atscsInitGuiders command test -->
+  <ocs:atscsInitGuiders Entity="AuxiliaryImager">
+   <ocs:RoiSpec>undefined</ocs:RoiSpec>
+  </ocs:atscsInitGuiders>
+
+  <!-- atscsSetFilter command test -->
+  <ocs:atscsSetFilter Entity="AuxiliaryImager">
+    <ocs:Name>u</ocs:Name>
+  </ocs:atscsSetFilter>
+
+  <!-- atscsSetDisperser command test -->
+  <ocs:atscsSetDisperser Entity="AuxiliaryImager">
+    <ocs:Name>red</ocs:Name>
+  </ocs:atscsSetDisperser>
+
+  <!-- atscsTakeImages command test -->
+  <ocs:atscsTakeImages Entity="AuxiliaryImager">
+    <ocs:NumberOfImages>2</ocs:NumberOfImages>
+    <ocs:ExposureTime>15.0</ocs:ExposureTime>
+    <ocs:Shutter>Open</ocs:Shutter>
+    <ocs:Science>true</ocs:Science>
+    <ocs:Name>sequencename</ocs:Name>
+  </ocs:atscsTakeImages>
+
+ </ocs:calibrationCommandSequence>
+</ocs:ocsCommandSequence>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T08:40:51.678" OnError="Continue">
+
+ <ocs:genericCommandSequence>
+
+  <!-- DMCS: warn about a configuration change -->
+  <ocs:setvalue Entity="ProcessingCluster">
+   <ocs:Parameter>someFlag</ocs:Parameter>
+   <ocs:Value>true</ocs:Value>
+  </ocs:setvalue>
+
+  <!-- CCS: change parameter_x -->
+  <ocs:setvalue Entity="Camera">
+   <ocs:Parameter>parameter_x</ocs:Parameter>
+   <ocs:Value>1.0</ocs:Value>
+  </ocs:setvalue>
+  <ocs:setvalue Entity="Camera">
+   <ocs:Parameter>parameter_x</ocs:Parameter>
+   <ocs:Value>1.1</ocs:Value>
+  </ocs:setvalue>
+  <ocs:setvalue Entity="Camera">
+   <ocs:Parameter>parameter_x</ocs:Parameter>
+   <ocs:Value>1.2</ocs:Value>
+  </ocs:setvalue>
+  <ocs:setvalue Entity="Camera">
+   <ocs:Parameter>parameter_x</ocs:Parameter>
+   <ocs:Value>1.3</ocs:Value>
+  </ocs:setvalue>
+
+ </ocs:genericCommandSequence>
+</ocs:ocsCommandSequence>

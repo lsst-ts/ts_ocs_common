@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T09:20:21.345" OnError="Continue">
+
+ <!-- tcsTarget (rotator=0.0) -->
+ <ocs:telescopeCommandSequence>
+  <ocs:tcsTarget Entity="LSST">
+   <ocs:Rotator>0.0</ocs:Rotator>
+  </ocs:tcsTarget>
+ </ocs:telescopeCommandSequence>
+
+ <!-- ccsSetFilter -->
+ <ocs:cameraCommandSequence>
+  <ocs:ccsSetFilter Entity="Camera">
+   <ocs:Name>u</ocs:Name>
+  </ocs:ccsSetFilter>
+ </ocs:cameraCommandSequence>
+</ocs:ocsCommandSequence>

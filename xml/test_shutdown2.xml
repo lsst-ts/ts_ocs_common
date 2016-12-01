@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T08:40:51.678" OnError="Continue">
+
+ <ocs:genericCommandSequence>
+
+  <!-- disable, standby and exitcontrol archiver -->
+  <ocs:disable Entity="Archiver" Timeout="5"/>
+  <ocs:standby Entity="Archiver" Timeout="5"/>
+  <ocs:exitcontrol Entity="Archiver" Timeout="5"/>
+
+  <!-- disable, standby and exitcontrol catchuparchiver -->
+  <ocs:disable Entity="CatchupArchiver" Timeout="5"/>
+  <ocs:standby Entity="CatchupArchiver" Timeout="5"/>
+  <ocs:exitcontrol Entity="CatchupArchiver" Timeout="5"/>
+
+  <!-- disable, standby and exitcontrol processingcluster -->
+  <ocs:disable Entity="ProcessingCluster" Timeout="5"/>
+  <ocs:standby Entity="ProcessingCluster" Timeout="5"/>
+  <ocs:exitcontrol Entity="ProcessingCluster" Timeout="5"/>
+
+  <!-- disable, standby and exitcontrol efdreplicator -->
+  <ocs:disable Entity="EFDReplicator" Timeout="5"/>
+  <ocs:standby Entity="EFDReplicator" Timeout="5"/>
+  <ocs:exitcontrol Entity="EFDReplicator" Timeout="5"/>
+
+  <!-- disable, standby and exitcontrol calibrationgenerator -->
+  <ocs:disable Entity="CalibrationGenerator" Timeout="5"/>
+  <ocs:standby Entity="CalibrationGenerator" Timeout="5"/>
+  <ocs:exitcontrol Entity="CalibrationGenerator" Timeout="5"/>
+
+ </ocs:genericCommandSequence>
+</ocs:ocsCommandSequence>

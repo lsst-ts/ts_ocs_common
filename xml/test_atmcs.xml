@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T09:20:21.345" OnError="Abort">
+ <ocs:calibrationCommandSequence>
+
+  <!-- atmcsATTelescope command test -->
+  <ocs:atmcsATTelescope Entity="AuxiliaryMount">
+   <ocs:Azimuth>13.5</ocs:Azimuth>
+   <ocs:Altitude>29.6</ocs:Altitude>
+   <ocs:Hexapod>undefined</ocs:Hexapod>
+   <ocs:M3Position>18.9</ocs:M3Position>
+   <ocs:Irotator>98.9</ocs:Irotator>
+   <ocs:Srotator>-98.9</ocs:Srotator>
+   <ocs:IrotatorParkPin>Parked</ocs:IrotatorParkPin>
+   <ocs:SrotatorParkPin>UnParked</ocs:SrotatorParkPin>
+   <ocs:Vents>Open</ocs:Vents>
+   <ocs:ForcedAir>Off</ocs:ForcedAir>
+   <ocs:M1Cover>Open</ocs:M1Cover>
+  </ocs:atmcsATTelescope>
+
+ </ocs:calibrationCommandSequence>
+</ocs:ocsCommandSequence>

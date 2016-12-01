@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T08:40:51.678" OnError="Continue">
+
+ <ocs:genericCommandSequence>
+
+  <!-- entercontrol archiver -->
+  <ocs:entercontrol Entity="Archiver" Timeout="5"/>
+
+  <!-- start archiver -->
+  <ocs:start Entity="Archiver" Timeout="30">
+   <ocs:StartId>ArchiverCfg</ocs:StartId>
+  </ocs:start>
+
+  <!-- enable archiver -->
+  <ocs:enable Entity="Archiver" Timeout="5"/>
+
+  <!-- entercontrol catchuparchiver -->
+  <ocs:entercontrol Entity="CatchupArchiver" Timeout="5"/>
+
+  <!-- start catchuparchiver -->
+  <ocs:start Entity="CatchupArchiver" Timeout="30">
+   <ocs:StartId>CatchupArchiverCfg</ocs:StartId>
+  </ocs:start>
+
+  <!-- enable catchuparchiver -->
+  <ocs:enable Entity="CatchupArchiver" Timeout="5"/>
+
+  <!-- entercontrol processingcluster -->
+  <ocs:entercontrol Entity="ProcessingCluster" Timeout="5"/>
+
+  <!-- start processingcluster -->
+  <ocs:start Entity="ProcessingCluster" Timeout="30">
+   <ocs:StartId>ProcessingClusterCfg</ocs:StartId>
+  </ocs:start>
+
+  <!-- enable processingcluster -->
+  <ocs:enable Entity="ProcessingCluster" Timeout="5"/>
+
+  <!-- entercontrol efdreplicator -->
+  <ocs:entercontrol Entity="EFDReplicator" Timeout="5"/>
+
+  <!-- start efdreplicator -->
+  <ocs:start Entity="EFDReplicator" Timeout="30">
+   <ocs:StartId>EFDReplicatorCfg</ocs:StartId>
+  </ocs:start>
+
+  <!-- enable efdreplicator -->
+  <ocs:enable Entity="EFDReplicator" Timeout="5"/>
+
+  <!-- entercontrol calibrationgenerator -->
+  <ocs:entercontrol Entity="CalibrationGenerator" Timeout="5"/>
+
+  <!-- start calibrationgenerator -->
+  <ocs:start Entity="CalibrationGenerator" Timeout="30">
+   <ocs:StartId>CalibrationGeneratorCfg</ocs:StartId>
+  </ocs:start>
+
+  <!-- enable calibrationgenerator -->
+  <ocs:enable Entity="CalibrationGenerator" Timeout="5"/>
+
+ </ocs:genericCommandSequence>
+</ocs:ocsCommandSequence>

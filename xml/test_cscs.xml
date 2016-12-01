@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T09:20:21.345" OnError="Abort">
+ <ocs:calibrationCommandSequence>
+
+  <!-- cscsScreen command test -->
+  <ocs:cscsScreen Entity="CalibrationScreen">
+   <ocs:Position>22.5</ocs:Position>
+  </ocs:cscsScreen>
+
+  <!-- cscsScreen command test -->
+  <ocs:cscsScreen Entity="CalibrationScreen">
+   <ocs:Position>park</ocs:Position>
+  </ocs:cscsScreen>
+
+  <!-- cscsScreen command test -->
+  <ocs:cscsScreen Entity="CalibrationScreen">
+   <ocs:Position>normal</ocs:Position>
+  </ocs:cscsScreen>
+
+ </ocs:calibrationCommandSequence>
+</ocs:ocsCommandSequence>

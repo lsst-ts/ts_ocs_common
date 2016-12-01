@@ -1,0 +1,1584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:ocs="http://project.lsst.org/ts"
+  targetNamespace="http://project.lsst.org/ts"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="20160607">
+
+ <annotation>
+  <documentation>
+   Description: OCS Schema for LSST
+   Author(s):
+    Philip N. Daly (pdaly@lsst.org)
+   Change Record:
+    15-Apr-2016: Original version (pdaly@lsst.org)
+    07-Jun-2016: Decprecated "WaitForCompletion" attribute (pdaly@lsst.org)
+    07-Jun-2016: Decprecated "RecordID" attribute (pdaly@lsst.org)
+    07-Jun-2016: Deleted "abort" command from generic set (pdaly@lsst.org)
+    07-Jun-2016: Deleted "stop" command from generic set (pdaly@lsst.org)
+    07-Jun-2016: Added "abort" command to business logic set (pdaly@lsst.org)
+    07-Jun-2016: Added "stop" command to business logic set (pdaly@lsst.org)
+    07-Jun-2016: Added "Timeout" attribute (pdaly@lsst.org)
+    07-Jun-2016: Added "waitForEvents" command to script set (pdaly@lsst.org)
+   Validation Test:
+    15-Apr-2016: Validated via validome.org and installed on project.lsst.org (pdaly@lsst.org)
+    07-Jun-2016: Validated via validome.org and installed on project.lsst.org (pdaly@lsst.org)
+   Copyright (c) 2016 AURA Inc. All rights reserved, Released under the GPL.
+  </documentation>
+ </annotation>
+
+ <!--
+  #+
+  #  Section 1: Primitives
+  #-
+ -->
+
+ <!-- boolean(s) -->
+
+ <simpleType id="BeamBlock_b" name="BeamBlock_b">
+  <annotation> <documentation> Beam blocker </documentation> </annotation>
+  <restriction base="boolean"/>
+ </simpleType>
+
+ <simpleType id="Guider_b" name="Guider_b">
+  <annotation> <documentation> Guide detector(s) state during an integration </documentation> </annotation>
+  <restriction base="boolean"/>
+ </simpleType>
+
+ <simpleType id="Science_b" name="Science_b">
+  <annotation> <documentation> Science detector(s) state during an integration </documentation> </annotation>
+  <restriction base="boolean"/>
+ </simpleType>
+
+ <simpleType id="Shutter_b" name="Shutter_b">
+  <annotation> <documentation> Shutter state during an integration </documentation> </annotation>
+  <restriction base="boolean"/>
+ </simpleType>
+
+ <!-- DEPRECATED
+  <simpleType id="WaitForCompletion_b" name="WaitForCompletion_b">
+   <annotation> <documentation> Script wait for completion directive </documentation> </annotation>
+   <restriction base="boolean"/>
+  </simpleType>
+ -->
+
+ <simpleType id="Wfs_b" name="Wfs_b">
+  <annotation> <documentation> Wavefront detector(s) state during an integration </documentation> </annotation>
+  <restriction base="boolean"/>
+ </simpleType>
+
+ <!-- enumeration(s) -->
+
+ <simpleType id="Calibration_e" name="Calibration_e">
+  <annotation> <documentation> Defines calibration types (PLACEHOLDER) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Nn][Oo][Nn][Ee]"/>
+   <pattern value="[Tt][Bb][Dd]1"/>
+   <pattern value="[Tt][Bb][Dd]2"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Dec_e" name="Dec_e">
+  <annotation> <documentation> Declination (\u00B190:00:00.000) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[+-]?[0-9][0-9]:[012345][0-9]:[012345][0-9]\.[0-9]{3}"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Dither_e" name="Dither_e">
+  <annotation> <documentation> Telescope dither pattern (PLACEHOLDER) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Nn][Oo][Nn][Ee]"/>
+   <pattern value="[Tt][Bb][Dd]1"/>
+   <pattern value="[Tt][Bb][Dd]2"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Dome_e" name="Dome_e">
+  <annotation> <documentation> Dome options (PLACEHOLDER) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Nn][Oo][Nn][Ee]"/>
+   <pattern value="[Tt][Bb][Dd]1"/>
+   <pattern value="[Tt][Bb][Dd]2"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Disperser_e" name="Disperser_e">
+  <annotation> <documentation> Known dispersers </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Rr][Ee][Dd]"/>
+   <pattern value="[Gg][Rr][Ee][Ee][Nn]"/>
+   <pattern value="[Bb][Ll][Uu][Ee]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Error_e" name="Error_e">
+  <annotation> <documentation> Script error directive </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Aa][Bb][Oo][Rr][Tt]"/>
+   <pattern value="[Cc][Oo][Nn][Tt][Ii][Nn][Uu][Ee]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Filter_e" name="Filter_e">
+  <annotation> <documentation> Known filters </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[ugriyz]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LaserLightSource_e" name="LaserLightSource_e">
+  <annotation> <documentation> Laser light source </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Aa][Ss][Ee][Rr][Ss][Oo][Uu][Rr][Cc][Ee][Aa]"/>
+   <pattern value="[Ll][Aa][Ss][Ee][Rr][Ss][Oo][Uu][Rr][Cc][Ee][Bb]"/>
+   <pattern value="[Ll][Aa][Ss][Ee][Rr][Ss][Oo][Uu][Rr][Cc][Ee][Cc]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LightPosition_e" name="LightPosition_e">
+  <annotation> <documentation> Light position </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Bb][Pp]"/>
+   <pattern value="[Ss][Cc][Rr][Ee][Ee][Nn]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LightSource_e" name="LightSource_e">
+  <annotation> <documentation> Light source </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Aa][Ss][Ee][Rr]"/>
+   <pattern value="[Ww][Hh][Ii][Tt][Ee]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Observation_e" name="Observation_e">
+  <annotation> <documentation> Script observation type </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Bb][Ii][Aa][Ss]"/>
+   <pattern value="[Zz][Ee][Rr][Oo]"/>
+   <pattern value="[Dd][Aa][Rr][Kk]"/>
+   <pattern value="[Ff][Ll][Aa][Tt]"/>
+   <pattern value="[Oo][Bb][Jj][Ee][Cc][Tt]"/>
+   <pattern value="[Te][Ee][Ss][Tt]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="OnOff_e" name="OnOff_e">
+  <annotation> <documentation> anything that can be defined as on or off </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Oo][Nn]"/>
+   <pattern value="[Oo][Ff][Ff]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="OpenClosed_e" name="OpenClosed_e">
+  <annotation> <documentation> anything that can be defined as open or closed </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Oo][Pp][Ee][Nn]"/>
+   <pattern value="[Cc][Ll][Oo][Ss][Ee][Dd]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Optics_e" name="Optics_e">
+  <annotation> <documentation> Optics options (PLACEHOLDER) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Nn][Oo][Nn][Ee]"/>
+   <pattern value="[Tt][Bb][Dd]1"/>
+   <pattern value="[Tt][Bb][Dd]2"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="ParkedUnparked_e" name="ParkedUnparked_e">
+  <annotation> <documentation> anything that can be defined as parked or unparked </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Pp][Aa][Rr][Kk][Ee][Dd]"/>
+   <pattern value="[Uu][Nn][Pp][Aa][Rr][Kk][Ee][Dd]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Position_e" name="Position_e">
+  <annotation> <documentation> Calibration screen position </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Nn][Oo][Rr][Mm][Aa][Ll]"/>
+   <pattern value="[Pp][Aa][Rr][Kk]"/>
+   <pattern value="[+-]?[0-9]*\.[0-9]*"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="RA_e" name="RA_e">
+  <annotation> <documentation> Right ascension (00:00:00.000 \u2264 RA \u2264 +23:59:59.999) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[012]?[0123]:[012345][0-9]:[012345][0-9]\.[0-9]{3}"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Recipe_e" name="Recipe_e">
+  <annotation> <documentation> Script recipe type </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ss][Tt][Aa][Nn][Dd][Aa][Rr][Dd][Vv][Ii][Ss][Ii][Tt]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="ScreenPosition_e" name="ScreenPosition_e">
+  <annotation> <documentation> Screen position as a string </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Nn][Oo][Rr][Mm][Aa][Ll]"/>
+   <pattern value="[Pp][Aa][Rr][Kk]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="ScriptSource_e" name="ScriptSource_e">
+  <annotation> <documentation> Identifying source of script </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee]"/>
+   <pattern value="[Ww][Ee][Bb][Ff][Oo][Rr][Mm]"/>
+   <pattern value="[Ss][Cc][Hh][Ee][Dd][Uu][Ll][Ee][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Track_e" name="Track_e">
+  <annotation> <documentation> Track options (PLACEHOLDER) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Nn][Oo][Nn][Ee]"/>
+   <enumeration value="None"/>
+   <pattern value="[Tt][Bb][Dd]1"/>
+   <pattern value="[Tt][Bb][Dd]2"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="WhiteLightSource_e" name="WhiteLightSource_e">
+  <annotation> <documentation> White light source </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ww][Hh][Ii][Tt][Ee][Ss][Oo][Uu][Rr][Cc][Ee][Aa]"/>
+   <pattern value="[Ww][Hh][Ii][Tt][Ee][Ss][Oo][Uu][Rr][Cc][Ee][Bb]"/>
+   <pattern value="[Ww][Hh][Ii][Tt][Ee][Ss][Oo][Uu][Rr][Cc][Ee][Cc]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="WrapDir_e" name="WrapDir_e">
+  <annotation> <documentation> Wrap direction (clockwise or counter-clockwise) </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Ww]"/>
+   <pattern value="[Cc][Cc][Ww]"/>
+  </restriction>
+ </simpleType>
+
+ <!-- simple type(s) -->
+
+ <simpleType id="Altitude_t" name="Altitude_t">
+  <annotation> <documentation> Telescope altitude (0.0\u00B0 \u2264 altitude \u2264 +90.0\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minExclusive value="0.0"/>
+   <maxExclusive value="90.0"/>
+  </restriction>
+ </simpleType>
+ 
+ <simpleType id="Azimuth_t" name="Azimuth_t">
+  <annotation> <documentation> Telescope azimuth (\u00B1360.0\u00B0, N=0\u00B0, E=90\u00B0, S=180\u00B0, W=270\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="-360.0"/>
+   <maxInclusive value="360.0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Elevation_t" name="Elevation_t">
+  <annotation> <documentation> Telescope elevation (0.0\u00B0 \u2264 elevation \u2264 +90.0\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minExclusive value="0.0"/>
+   <maxExclusive value="90.0"/>
+  </restriction>
+ </simpleType>
+ 
+ <simpleType id="Equinox_t" name="Equinox_t">
+  <annotation> <documentation> Co-ordinate system equinox (1950.0 \u2264 equinox \u2264 2050.0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="1950.0"/>
+   <maxInclusive value="2050.0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Focus_t" name="Focus_t">
+  <annotation> <documentation> Focus value (-100.0\u03BCm \u2264 focus \u2264 +100.0\u03BCm) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="-100.0"/>
+   <maxInclusive value="100.0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="M3Angle_t" name="M3Angle_t">
+  <annotation> <documentation> M3 angle (-25.0\u00B0 \u2264 angle \u2264 +25.0\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="-25.0"/>
+   <maxInclusive value="25.0"/>
+  </restriction>
+ </simpleType>
+ 
+ <simpleType id="NegativeDouble_t" name="NegativeDouble_t">
+  <annotation> <documentation> Defines a double \u003C 0.0 </documentation> </annotation>
+  <restriction base="double">
+   <maxExclusive value="0.0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="PerCentDouble_t" name="PerCentDouble_t">
+  <annotation> <documentation> Defines a percentage (0.0 \u2264 percent \u2264 +100.0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="0.0"/>
+   <maxInclusive value="100.0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="PositiveDouble_t" name="PositiveDouble_t">
+  <annotation> <documentation> Defines a double (\u2265 0.0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="0.0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="PositiveLong_t" name="PositiveLong_t">
+  <annotation> <documentation> Defines a long (\u2265 0) </documentation> </annotation>
+  <restriction base="long">
+   <minInclusive value="0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="RotatorAngle_t" name="RotatorAngle_t">
+  <annotation> <documentation> Rotator angle (-270.0\u00B0 \u2264 angle \u2264 +270.0\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="-270.0"/>
+   <maxInclusive value="270.0"/>
+  </restriction>
+ </simpleType>
+ 
+ <simpleType id="ScreenPosition_t" name="ScreenPosition_t">
+  <annotation> <documentation> Screen position as an angle (-90.0\u00B0 \u2264 position \u2264 +90.0\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="-90.0"/>
+   <maxInclusive value="90.0"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="TiltAngle_t" name="TiltAngle_t">
+  <annotation> <documentation> Tilt angle (-90.0\u00B0 \u2264 angle \u2264 +90.0\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="-90.0"/>
+   <maxInclusive value="90.0"/>
+  </restriction>
+ </simpleType>
+ 
+ <simpleType id="TipAngle_t" name="TipAngle_t">
+  <annotation> <documentation> Tip angle (-90.0\u00B0 \u2264 angle \u2264 +90.0\u00B0) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="-90.0"/>
+   <maxInclusive value="90.0"/>
+  </restriction>
+ </simpleType>
+ 
+ <simpleType id="WavelengthDouble_t" name="WavelengthDouble_t">
+  <annotation> <documentation> Defines a wavelength (3000.0\u212B \u2264 \u03BB \u2264 10000.0\u212B) </documentation> </annotation>
+  <restriction base="double">
+   <minInclusive value="3000.0"/>
+   <maxInclusive value="10000.0"/>
+  </restriction>
+ </simpleType>
+
+ <!-- complex type(s) -->
+
+ <complexType id="AltAz_t" name="AltAz_t">
+  <annotation> <documentation> Alt and Az expressed from simple types </documentation> </annotation>
+  <all>
+   <element name="Altitude" type="ocs:Altitude_t" minOccurs="1" maxOccurs="1"/>
+   <element name="Azimuth" type="ocs:Azimuth_t" minOccurs="1" maxOccurs="1"/>
+  </all>
+ </complexType>
+
+ <complexType id="Dither_t" name="Dither_t">
+  <annotation> <documentation> Dither pattern expressed from simple types (PLACEHOLDER) </documentation> </annotation>
+  <all>
+   <element name="ra_offset" type="float" minOccurs="1" maxOccurs="1"/>
+   <element name="dec_offset" type="float" minOccurs="1" maxOccurs="1"/>
+   <element name="pattern" type="ocs:Dither_e" minOccurs="1" maxOccurs="1"/>
+  </all>
+ </complexType>
+
+ <complexType id="RADec_t" name="RADec_t">
+  <annotation> <documentation> RA, Dec and Equinox expressed from simple and complex types </documentation> </annotation>
+  <all>
+   <element name="RightAscension" type="ocs:RA_e" minOccurs="1" maxOccurs="1"/>
+   <element name="Declination" type="ocs:Dec_e" minOccurs="1" maxOccurs="1"/>
+   <element name="Equinox" type="ocs:Equinox_t" minOccurs="1" maxOccurs="1"/>
+  </all>
+ </complexType>
+
+ <complexType id="ScanDuration_t" name="ScanDuration_t">
+  <annotation> <documentation> cimsScanDiode duration parameters </documentation> </annotation>
+  <all>
+   <element name="DiodeIDs" type="string" minOccurs="0" maxOccurs="1"/>
+   <element name="Frequency" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Duration" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+  </all>
+ </complexType>
+
+ <complexType id="ScanUntil_t" name="ScanUntil_t">
+  <annotation> <documentation> cimsScanDiode until parameters </documentation> </annotation>
+  <all>
+   <element name="DiodeIDs" type="string" minOccurs="0" maxOccurs="1"/>
+   <element name="Frequency" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Duration" type="ocs:NegativeDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Until" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+  </all>
+ </complexType>
+
+ <!--
+  #+
+  #  Section 2: Entities
+  #-
+ -->
+
+ <!-- Entitys (patterns) -->
+
+ <simpleType id="AuxiliaryEnclosure_e" name="AuxiliaryEnclosure_e">
+  <annotation> <documentation> auxiliary enclosure entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Ee][Nn][Cc][Ll][Oo][Ss][Uu][Rr][Ee]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="AuxiliaryMount_e" name="AuxiliaryMount_e">
+  <annotation> <documentation> auxiliary mount entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Mm][Oo][Uu][Nn][Tt]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="AuxiliaryImager_e" name="AuxiliaryImager_e">
+  <annotation> <documentation> auxiliary imager entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Ii][Mm][Aa][Gg][Ee][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="AuxiliarySpectrograph_e" name="AuxiliarySpectrograph_e">
+  <annotation> <documentation> auxiliary spectrograph entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Ss][Pp][Ee][Cc][Tt][Rr][Oo][Gg][Rr][Aa][Pp][Hh]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="CalibrationScreen_e" name="CalibrationScreen_e">
+  <annotation> <documentation> calibration screen entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Ss][Cc][Rr][Ee][Ee][Nn]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="CalibrationIllumination_e" name="CalibrationIllumination_e">
+  <annotation> <documentation> calibration illumination entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Ii][Ll][Ll][Uu][Mm][Ii][Nn][Aa][Tt][Ii][Oo][Nn]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="CalibrationPhotodiodes_e" name="CalibrationPhotodiodes_e">
+  <annotation> <documentation> calibration photodiodes entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Pp][Hh][Oo][Tt][Oo][Dd][Ii][Oo][Dd][Ee][Ss]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="CalibrationSpectrograph_e" name="CalibrationSpectrograph_e">
+  <annotation> <documentation> calibration spectrograph entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Ss][Pp][Ee][Cc][Tt][Rr][Oo][Gg][Rr][Aa][Pp][Hh]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="CollimatedBeamProjector_e" name="CollimatedBeamProjector_e">
+  <annotation> <documentation> collimated beam projector entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Oo][Ll][Ll][Ii][Mm][Aa][Tt][Ee][Dd][Bb][Ee][Aa][Mm][Pp][Rr][Oo][Jj][Ee][Cc][Tt][Oo][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="VisibleAllSkyCamera_e" name="VisibleAllSkyCamera_e">
+  <annotation> <documentation> visible all sky camera entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Vv][Ii][Ss][Ii][Bb][Ll][Ee][Aa][Ll][Ll][Ss][Kk][Yy][Cc][Aa][Mm][Ee][Rr][Aa]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="InfraRedAllSkyCamera_e" name="InfraRedAllSkyCamera_e">
+  <annotation> <documentation> infra-red all sky camera entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ii][Nn][Ff][Rr][Aa][Rr][Ee][Dd][Aa][Ll][Ll][Ss][Kk][Yy][Cc][Aa][Mm][Ee][Rr][Aa]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="DIMM_e" name="DIMM_e">
+  <annotation> <documentation> differential image motion monitor entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Dd][Ii][Mm][Mm]"/>
+   <pattern value="[Dd][Ii][Ff][Ff][Ee][Rr][Ee][Nn][Tt][Ii][Aa][Ll][Ii][Mm][Aa][Gg][Ee][Mm][Oo][Tt][Ii][Oo][Nn][Mm][Oo][Nn][Ii][Tt][oO][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="DustMonitor_e" name="DustMonitor_e">
+  <annotation> <documentation> dust monitor entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Dd][Uu][Ss][Tt][Mm][Oo][Nn][Ii][Tt][Oo][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="EarthquakeDetector_e" name="EarthquakeDetector_e">
+  <annotation> <documentation> earthquake detector entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ee][Aa][Rr][Tt][Hh][Qq][Uu][Aa][Kk][Ee][Dd][Ee][Tt][Ee][Cc][Tt][Oo][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LightningDetector_e" name="LightningDetector_e">
+  <annotation> <documentation> lightning detector entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Ii][Gg][Hh][Tt][Nn][Ii][Nn][Gg][Dd][Ee][Tt][Ee][Cc][Tt][Oo][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Camera_e" name="Camera_e">
+  <annotation> <documentation> camera entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Mm][Ee][Rr][Aa]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Archiver_e" name="Archiver_e">
+  <annotation> <documentation> archiver entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Aa][Rr][Cc][Hh][Ii][Vv][Ee][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="CatchupArchiver_e" name="CatchupArchiver_e">
+  <annotation> <documentation> catchup archiver entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Tt][Cc][Hh][Uu][Pp][Aa][Rr][Cc][Hh][Ii][Vv][Ee][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="ProcessingCluster_e" name="ProcessingCluster_e">
+  <annotation> <documentation> processing cluster entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Pp][Rr][Oo][Cc][Ee][Ss][Ss][Ii][Nn][Gg][Cc][Ll][Uu][Ss][Tt][Ee][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="EFDReplicator_e" name="EFDReplicator_e">
+  <annotation> <documentation> engineering facility database replicator entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ee][Ff][Dd][Rr][Ee][Pp][Ll][Ii][Cc][Aa][Tt][Oo][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="CalibrationGenerator_e" name="CalibrationGenerator_e">
+  <annotation> <documentation> calibration generator entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Gg][Ee][Nn][Ee][Rr][Aa][Tt][Oo][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="AirConditioning_e" name="AirConditioning_e">
+  <annotation> <documentation> air conditioning entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Aa][Ii][Rr][Cc][Oo][Nn][Dd][Ii][Tt][Ii][Oo][Nn][Ii][Nn][Gg]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="PowerConditioning_e" name="PowerConditioning_e">
+  <annotation> <documentation> power conditioning entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Pp][Oo][Ww][Ee][Rr][Cc][Oo][Nn][Dd][Ii][Tt][Ii][Oo][Nn][Ii][Nn][Gg]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LSSTEnclosure_e" name="LSSTEnclosure_e">
+  <annotation> <documentation> LSST enclosure entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Ss][Ss][Tt][Ee][Nn][Cc][Ll][Oo][Ss][Uu][Rr][Ee]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LSSTMount_e" name="LSSTMount_e">
+  <annotation> <documentation> LSST mount entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Ss][Ss][Tt][Mm][Oo][Uu][Nn][Tt]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LSSTHexapod_e" name="LSSTHexapod_e">
+  <annotation> <documentation> LSST hexapod entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Ss][Ss][Tt][Hh][Ee][Xx][Aa][Pp][Oo][Dd]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LSSTRotator_e" name="LSSTRotator_e">
+  <annotation> <documentation> LSST rotator entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Ss][Ss][Tt][Rr][Oo][Tt][Aa][Tt][Oo][Rr]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="LSST_e" name="LSST_e">
+  <annotation> <documentation> LSST entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Ll][Ss][Ss][Tt]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Calypso_e" name="Calypso_e">
+  <annotation> <documentation> Calypso entity </documentation> </annotation>
+  <restriction base="string">
+   <pattern value="[Cc][Aa][Ll][Yy][Pp][Ss][Oo]"/>
+  </restriction>
+ </simpleType>
+
+ <simpleType id="Entity_e" name="Entity_e">
+  <annotation> <documentation> Defines all entity </documentation> </annotation>
+  <restriction base="string">
+   <!-- Auxiliary Enclosure -->
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Ee][Nn][Cc][Ll][Oo][Ss][Uu][Rr][Ee]"/>
+   <!-- Auxiliary Mount -->
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Mm][Oo][Uu][Nn][Tt]"/>
+   <!-- Auxiliary Imager -->
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Ii][Mm][Aa][Gg][Ee][Rr]"/>
+   <!-- Auxiliary Spectrograph -->
+   <pattern value="[Aa][Uu][Xx][Ii][Ll][Ii][Aa][Rr][Yy][Ss][Pp][Ee][Cc][Tt][Rr][Oo][Gg][Rr][Aa][Pp][Hh]"/>
+   <!-- Calibration Screen -->
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Ss][Cc][Rr][Ee][Ee][Nn]"/>
+   <!-- Calibration Illumination -->
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Ii][Ll][Ll][Uu][Mm][Ii][Nn][Aa][Tt][Ii][Oo][Nn]"/>
+   <!-- Calibration Photodiodes -->
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Pp][Hh][Oo][Tt][Oo][Dd][Ii][Oo][Dd][Ee][Ss]"/>
+   <!-- Calibration Spectrograph -->
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Ss][Pp][Ee][Cc][Tt][Rr][Oo][Gg][Rr][Aa][Pp][Hh]"/>
+   <!-- Collimated Beam Projector -->
+   <pattern value="[Cc][Oo][Ll][Ll][Ii][Mm][Aa][Tt][Ee][Dd][Bb][Ee][Aa][Mm][Pp][Rr][Oo][Jj][Ee][Cc][Tt][Oo][Rr]"/>
+   <!-- Visible All Sky Camera -->
+   <pattern value="[Vv][Ii][Ss][Ii][Bb][Ll][Ee][Aa][Ll][Ll][Ss][Kk][Yy][Cc][Aa][Mm][Ee][Rr][Aa]"/>
+   <!-- Infra-Red All Sky Camera -->
+   <pattern value="[Ii][Nn][Ff][Rr][Aa][Rr][Ee][Dd][Aa][Ll][Ll][Ss][Kk][Yy][Cc][Aa][Mm][Ee][Rr][Aa]"/>
+   <!-- DIMM -->
+   <pattern value="[Dd][Ii][Mm][Mm]"/>
+   <!-- Differential Image Motion Monitor -->
+   <pattern value="[Dd][Ii][Ff][Ff][Ee][Rr][Ee][Nn][Tt][Ii][Aa][Ll][Ii][Mm][Aa][Gg][Ee][Mm][Oo][Tt][Ii][Oo][Nn][Mm][Oo][Nn][Ii][Tt][oO][Rr]"/>
+   <!-- Dust Monitor -->
+   <pattern value="[Dd][Uu][Ss][Tt][Mm][Oo][Nn][Ii][Tt][Oo][Rr]"/>
+   <!-- Earthquake Detector -->
+   <pattern value="[Ee][Aa][Rr][Tt][Hh][Qq][Uu][Aa][Kk][Ee][Dd][Ee][Tt][Ee][Cc][Tt][Oo][Rr]"/>
+   <!-- Lightning Detector -->
+   <pattern value="[Ll][Ii][Gg][Hh][Tt][Nn][Ii][Nn][Gg][Dd][Ee][Tt][Ee][Cc][Tt][Oo][Rr]"/>
+   <!-- Camera -->
+   <pattern value="[Cc][Aa][Mm][Ee][Rr][Aa]"/>
+   <!-- Archiver -->
+   <pattern value="[Aa][Rr][Cc][Hh][Ii][Vv][Ee][Rr]"/>
+   <!-- Catchup Archiver -->
+   <pattern value="[Cc][Aa][Tt][Cc][Hh][Uu][Pp][Aa][Rr][Cc][Hh][Ii][Vv][Ee][Rr]"/>
+   <!-- Processing Cluster -->
+   <pattern value="[Pp][Rr][Oo][Cc][Ee][Ss][Ss][Ii][Nn][Gg][Cc][Ll][Uu][Ss][Tt][Ee][Rr]"/>
+   <!-- EFD Replicator -->
+   <pattern value="[Ee][Ff][Dd][Rr][Ee][Pp][Ll][Ii][Cc][Aa][Tt][Oo][Rr]"/>
+   <!-- Calibration Generator -->
+   <pattern value="[Cc][Aa][Ll][Ii][Bb][Rr][Aa][Tt][Ii][Oo][Nn][Gg][Ee][Nn][Ee][Rr][Aa][Tt][Oo][Rr]"/>
+   <!-- Air Conditioning -->
+   <pattern value="[Aa][Ii][Rr][Cc][Oo][Nn][Dd][Ii][Tt][Ii][Oo][Nn][Ii][Nn][Gg]"/>
+   <!-- Power Conditioning -->
+   <pattern value="[Pp][Oo][Ww][Ee][Rr][Cc][Oo][Nn][Dd][Ii][Tt][Ii][Oo][Nn][Ii][Nn][Gg]"/>
+   <!-- LSST Enclosure -->
+   <pattern value="[Ll][Ss][Ss][Tt][Ee][Nn][Cc][Ll][Oo][Ss][Uu][Rr][Ee]"/>
+   <!-- LSST Mount -->
+   <pattern value="[Ll][Ss][Ss][Tt][Mm][Oo][Uu][Nn][Tt]"/>
+   <!-- LSST Hexapod -->
+   <pattern value="[Ll][Ss][Ss][Tt][Hh][Ee][Xx][Aa][Pp][Oo][Dd]"/>
+   <!-- LSST Rotator -->
+   <pattern value="[Ll][Ss][Ss][Tt][Rr][Oo][Tt][Aa][Tt][Oo][Rr]"/>
+   <!-- LSST -->
+   <pattern value="[Ll][Ss][Ss][Tt]"/>
+   <!-- Calypso -->
+   <pattern value="[Cc][Aa][Ll][Yy][Pp][Ss][Oo]"/>
+  </restriction>
+ </simpleType>
+
+ <!--
+  #+
+  #  Section 3: Behavioural Command(s)
+  #-
+ -->
+
+ <!-- atecs -->
+
+ <complexType id="atecsATEnclosure_c" name="atecsATEnclosure_c">
+  <annotation> <documentation> atecsATEnclosure command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Azimuth" type="ocs:Azimuth_t" minOccurs="1" maxOccurs="1"/>
+   <element name="LowerShutter" type="ocs:OpenClosed_e" minOccurs="1" maxOccurs="1"/>
+   <element name="UpperShutter" type="ocs:OpenClosed_e" minOccurs="1" maxOccurs="1"/>
+   <element name="WindGate1" type="string" minOccurs="1" maxOccurs="1"/>
+   <element name="WindGate2" type="string" minOccurs="1" maxOccurs="1"/>
+   <element name="WindGate3" type="string" minOccurs="1" maxOccurs="1"/>
+   <element name="WindGate4" type="string" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryEnclosure_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- atics -->
+
+ <complexType id="aticsInitGuiders_c" name="aticsInitGuiders_c">
+  <annotation> <documentation> aticsInitGuiders command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="RoiSpec" type="anyURI" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryImager_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="aticsSetFilter_c" name="aticsSetFilter_c">
+  <annotation> <documentation> aticsSetFilter command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Name" type="ocs:Filter_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryImager_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="aticsTakeImages_c" name="aticsTakeImages_c">
+  <annotation> <documentation> aticsTakeImages command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="NumberOfImages" type="ocs:PositiveLong_t" minOccurs="0" maxOccurs="1"/>
+   <element name="ExposureTime" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Shutter" type="ocs:OpenClosed_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Science" type="ocs:Science_b" minOccurs="0" maxOccurs="1"/>
+   <element name="Name" type="string" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryImager_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- atmcs -->
+
+ <complexType id="atmcsATTelescope_c" name="atmcsATTelescope_c">
+  <annotation> <documentation> atmcsATTelescope command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Azimuth" type="ocs:Azimuth_t" minOccurs="1" maxOccurs="1"/>
+   <element name="Altitude" type="ocs:Altitude_t" minOccurs="1" maxOccurs="1"/>
+   <element name="Hexapod" type="string" minOccurs="1" maxOccurs="1"/>
+   <element name="M3Position" type="ocs:M3Angle_t" minOccurs="1" maxOccurs="1"/>
+   <element name="Irotator" type="ocs:RotatorAngle_t" minOccurs="1" maxOccurs="1"/>
+   <element name="Srotator" type="ocs:RotatorAngle_t" minOccurs="1" maxOccurs="1"/>
+   <element name="IrotatorParkPin" type="ocs:ParkedUnparked_e" minOccurs="1" maxOccurs="1"/>
+   <element name="SrotatorParkPin" type="ocs:ParkedUnparked_e" minOccurs="1" maxOccurs="1"/>
+   <element name="Vents" type="ocs:OpenClosed_e" minOccurs="1" maxOccurs="1"/>
+   <element name="ForcedAir" type="ocs:OnOff_e" minOccurs="1" maxOccurs="1"/>
+   <element name="M1Cover" type="ocs:OpenClosed_e" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryMount_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- atscs -->
+
+ <complexType id="atscsInitGuiders_c" name="atscsInitGuiders_c">
+  <annotation> <documentation> atscsInitGuiders command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="RoiSpec" type="anyURI" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryImager_e" use="required"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="atscsSetDisperser_c" name="atscsSetDisperser_c">
+  <annotation> <documentation> atscsSetDisperser command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Name" type="ocs:Disperser_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryImager_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="atscsSetFilter_c" name="atscsSetFilter_c">
+  <annotation> <documentation> atscsSetFilter command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Name" type="ocs:Filter_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryImager_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="atscsTakeImages_c" name="atscsTakeImages_c">
+  <annotation> <documentation> atscsTakeImages command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="NumberOfImages" type="ocs:PositiveLong_t" minOccurs="0" maxOccurs="1"/>
+   <element name="ExposureTime" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Shutter" type="ocs:OpenClosed_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Science" type="ocs:Science_b" minOccurs="0" maxOccurs="1"/>
+   <element name="Name" type="string" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:AuxiliaryImager_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- cbpcs -->
+
+ <complexType id="cbpcsOff_c" name="cbpcsOff_c">
+  <annotation> <documentation> cbpcsOff command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:CollimatedBeamProjector_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cbpcsOn_c" name="cbpcsOn_c">
+  <annotation> <documentation> cbpcsOn command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:CollimatedBeamProjector_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cbpcsMaskWheel_c" name="cbpcsMaskWheel_c">
+  <annotation> <documentation> cbpcsMaskWheel command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Name" type="string"  minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CollimatedBeamProjector_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cbpcsMount_c" name="cbpcsMount_c">
+  <annotation> <documentation> cbpcsMount command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Altitude" type="ocs:Altitude_t" minOccurs="1" maxOccurs="1"/>
+   <element name="Azimuth" type="ocs:Azimuth_t" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CollimatedBeamProjector_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cbpcsShutter_c" name="cbpcsShutter_c">
+  <annotation> <documentation> cbpcsShutter command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="State" type="ocs:OpenClosed_e"  minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CollimatedBeamProjector_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cbpcsStage_c" name="cbpcsStage_c">
+  <annotation> <documentation> cbpcsStage command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Tip" type="ocs:TipAngle_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Tilt" type="ocs:TiltAngle_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Focus" type="ocs:Focus_t" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CollimatedBeamProjector_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- ccs -->
+
+ <complexType id="ccsInitGuiders_c" name="ccsInitGuiders_c">
+  <annotation> <documentation> initGuiders command from LSE-71 </documentation> </annotation>
+  <sequence>
+   <element name="RoiSpec" type="anyURI" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:Camera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="ccsInitImage_c" name="ccsInitImage_c">
+  <annotation> <documentation> initImage command from LSE-71 </documentation> </annotation>
+  <sequence>
+   <element name="DeltaTime" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:Camera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="ccsSetFilter_c" name="ccsSetFilter_c">
+  <annotation> <documentation> setFilter command from LSE-71 </documentation> </annotation>
+  <sequence>
+   <element name="Name" type="ocs:Filter_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:Camera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="ccsTakeImages_c" name="ccsTakeImages_c">
+  <annotation> <documentation> takeImages command from LSE-71 </documentation> </annotation>
+  <sequence>
+   <element name="NumberOfImages" type="ocs:PositiveLong_t" minOccurs="0" maxOccurs="1"/>
+   <element name="ExposureTime" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="ShutterCondition" type="ocs:Shutter_b" minOccurs="0" maxOccurs="1"/>
+   <element name="ScienceReadout" type="ocs:Science_b" minOccurs="0" maxOccurs="1"/>
+   <element name="GuiderReadout" type="ocs:Guider_b" minOccurs="0" maxOccurs="1"/>
+   <element name="WfsReadout" type="ocs:Wfs_b" minOccurs="0" maxOccurs="1"/>
+   <element name="ImageSequenceName" type="string" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:Camera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- cics -->
+
+ <complexType id="cicsLaserLight_c" name="cicsLaserLight_c">
+  <annotation> <documentation> cicsLaserLight command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Source" type="ocs:LaserLightSource_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Intensity" type="ocs:PerCentDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Wavelength" type="ocs:WavelengthDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="BeamBlock" type="ocs:BeamBlock_b" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cicsLaserLightOff_c" name="cicsLaserLightOff_c">
+  <annotation> <documentation> cicsLaserLightOff command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Source" type="ocs:LaserLightSource_e"  minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cicsLaserLightOn_c" name="cicsLaserLightOn_c">
+  <annotation> <documentation> cicsLaserLightOn command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Source" type="ocs:LaserLightSource_e"  minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cicsLightControl_c" name="cicsLightControl_c">
+  <annotation> <documentation> cicsLightControl command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Source" type="ocs:LightSource_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Position" type="ocs:LightPosition_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Shutter" type="ocs:Shutter_b" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cicsWhiteLight_c" name="cicsWhiteLight_c">
+  <annotation> <documentation> cicsWhiteLight command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Source" type="ocs:WhiteLightSource_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Intensity" type="ocs:PerCentDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="BeamBlock" type="ocs:BeamBlock_b" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cicsWhiteLightOff_c" name="cicsWhiteLightOff_c">
+  <annotation> <documentation> cicsWhiteLightOff command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cicsWhiteLightOn_c" name="cicsWhiteLightOn_c">
+  <annotation> <documentation> cicsWhiteLightOn command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- cims -->
+
+ <complexType id="cimsDiodeControllerOff_c" name="cimsDiodeControllerOff_c">
+  <annotation> <documentation> cimsDiodeControllerOff command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="DiodeIDs" type="string" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationPhotodiodes_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cimsDiodeControllerOn_c" name="cimsDiodeControllerOn_c">
+  <annotation> <documentation> cimsDiodeControllerOn command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="DiodeIDs" type="string" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationPhotodiodes_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cimsScanDiode_c" name="cimsScanDiode_c">
+  <annotation> <documentation> cimsScanDiode command from LSE-139 </documentation> </annotation>
+  <choice>
+   <element name="ScanDuration" type="ocs:ScanDuration_t" minOccurs="0" maxOccurs="1"/>
+   <element name="ScanUntil" type="ocs:ScanUntil_t" minOccurs="0" maxOccurs="1"/>
+  </choice>
+  <attribute name="Entity" type="ocs:CalibrationPhotodiodes_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cimsSEDOff_c" name="cimsSEDOff_c">
+  <annotation> <documentation> cimsSEDOff command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:CalibrationSpectrograph_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cimsSEDOn_c" name="cimsSEDOn_c">
+  <annotation> <documentation> cimsSEDOn command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:CalibrationSpectrograph_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cimsSEDPosition_c" name="cimsSEDPosition_c">
+  <annotation> <documentation> cimsSEDPosition command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Tip" type="ocs:TipAngle_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Tilt" type="ocs:TiltAngle_t" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationSpectrograph_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="cimsSEDStartScan_c" name="cimsSEDStartScan_c">
+  <annotation> <documentation> cimsSEDStartScan command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Wavelength" type="ocs:WavelengthDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Resolution" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationSpectrograph_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- cscs -->
+
+ <complexType id="cscsScreen_c" name="cscsScreen_c">
+  <annotation> <documentation> cscsScreen from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Position" type="ocs:Position_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:CalibrationScreen_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- dimmcs -->
+
+ <complexType id="dimmcsEnclosure_c" name="dimmcsEnclosure_c">
+  <annotation> <documentation> dimmcsEnclosure command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Position" type="ocs:OpenClosed_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:DIMM_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="dimmcsTarget_c" name="dimmcsTarget_c">
+  <annotation> <documentation> dimmcsTarget command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="Altitude" type="ocs:Altitude_t" minOccurs="1" maxOccurs="1"/>
+   <element name="Azimuth" type="ocs:Azimuth_t" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:DIMM_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="dimmcsTakeImages_c" name="dimmcsTakeImages_c">
+  <annotation> <documentation> dimmcsTakeImages command from LSE-139 </documentation> </annotation>
+  <sequence>
+   <element name="ExposureTime" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Frequency" type="ocs:PositiveDouble_t" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:DIMM_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- emcs -->
+
+ <complexType id="emcsIRASCamOn_c" name="emcsIRASCamOn_c">
+  <annotation> <documentation> emcsIRASCamOn command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:InfraRedAllSkyCamera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="emcsIRASCamOff_c" name="emcsIRASCamOff_c">
+  <annotation> <documentation> emcsIRASCamOff command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:InfraRedAllSkyCamera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="emcsVisASCamOn_c" name="emcsVisASCamOn_c">
+  <annotation> <documentation> emcsVisASCamOn command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:VisibleAllSkyCamera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="emcsVisASCamOff_c" name="emcsVisASCamOff_c">
+  <annotation> <documentation> emcsVisASCamOff command from LSE-139 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:VisibleAllSkyCamera_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!-- tcs -->
+
+ <complexType id="tcsCalibration_c" name="tcsCalibration_c">
+  <annotation> <documentation> target command from LSE-73 </documentation> </annotation>
+  <sequence>
+   <element name="Calibration" type="ocs:Calibration_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Elevation" type="ocs:Elevation_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Azimuth" type="ocs:Azimuth_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Rotator" type="ocs:RotatorAngle_t" minOccurs="0" maxOccurs="1"/>
+   <element name="Dome" type="ocs:Dome_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Optics" type="ocs:Optics_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:LSST_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="tcsTarget_c" name="tcsTarget_c">
+  <annotation> <documentation> target command from LSE-73 </documentation> </annotation>
+  <sequence>
+   <choice minOccurs="0" maxOccurs="1">
+     <element name="J2000" type="ocs:RADec_t"/>
+     <element name="AltAz" type="ocs:AltAz_t"/>
+   </choice>
+   <element name="Rotator" type="ocs:RotatorAngle_t" minOccurs="0" maxOccurs="1"/>
+   <element name="WrapDirection" type="ocs:WrapDir_e" minOccurs="0" maxOccurs="1"/>
+   <element name="TrackOptions" type="ocs:Track_e" minOccurs="0" maxOccurs="1"/>
+   <element name="GuiderOptions" type="ocs:Guider_b" minOccurs="0" maxOccurs="1"/>
+   <element name="DomeOptions" type="ocs:Dome_e" minOccurs="0" maxOccurs="1"/>
+   <element name="Optics" type="ocs:Optics_e" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:LSST_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!--
+  #+
+  #  Section 4: Business Logic Commands(s)
+  #-
+ -->
+
+ <complexType id="Abort_c" name="Abort_c">
+  <annotation> <documentation> Generic abort() command from LSE-209 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="Stop_c" name="Stop_c">
+  <annotation> <documentation> Generic stop() command from LSE-209 </documentation> </annotation>
+  <sequence>
+   <element name="Device" type="string" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!--
+  #+
+  #  Section 5: Generic Commands(s)
+  #-
+ -->
+
+ <complexType id="Disable_c" name="Disable_c">
+  <annotation> <documentation> Generic disable() command from LSE-209 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="Enable_c" name="Enable_c">
+  <annotation> <documentation> Generic enable() command from LSE-209 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="EnterControl_c" name="EnterControl_c">
+  <annotation> <documentation> Generic enterControl() command from LSE-209 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="ExitControl_c" name="ExitControl_c">
+  <annotation> <documentation> Generic releasecontrol() command from LSE-209 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="SetValue_c" name="SetValue_c">
+  <annotation> <documentation> Generic setvalue() command </documentation> </annotation>
+  <sequence>
+   <element name="Parameter" type="string" minOccurs="1" maxOccurs="1"/>
+   <element name="Value" type="string" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="Start_c" name="Start_c">
+  <annotation> <documentation> Generic start() command from LSE-209 </documentation> </annotation>
+  <sequence>
+   <element name="StartId" type="string" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <complexType id="Standby_c" name="Standby_c">
+  <annotation> <documentation> Generic unconfigure() command from LSE-209 </documentation> </annotation>
+  <attribute name="Entity" type="ocs:Entity_e" use="required"/>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!--
+  #+
+  #  Section 6: Script Commands(s)
+  #-
+ -->
+
+ <complexType id="WaitForEvents_c" name="WaitForEvents_c">
+  <annotation> <documentation> Scripting waitForEvents() command from LTS-237 </documentation> </annotation>
+  <sequence>
+   <element name="Events" type="string" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+  <attribute name="Timeout" type="ocs:PositiveLong_t" use="optional"/>
+  <!-- DEPRECATED
+   <attribute name="WaitForCompletion" type="ocs:WaitForCompletion_b" use="required"/>
+   <attribute name="RecordID" type="ocs:PositiveLong_t" use="optional"/>
+  -->
+ </complexType>
+
+ <!--
+  #+
+  #  Section 7: Command Record(s)
+  #-
+ -->
+
+ <complexType id="businessLogicCommand_s" name="businessLogicCommand_s">
+  <annotation> <documentation> Business logic command sequence </documentation> </annotation>
+  <sequence>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element name="abort" type="ocs:Abort_c" minOccurs="0" maxOccurs="1"/>
+    <element name="stop" type="ocs:Stop_c" minOccurs="0" maxOccurs="1"/>
+   </choice>
+  </sequence>
+ </complexType>
+
+ <complexType id="cameraCommand_s" name="cameraCommand_s">
+  <annotation> <documentation> Camera command sequence </documentation> </annotation>
+  <sequence>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element name="ccsInitGuiders" type="ocs:ccsInitGuiders_c" minOccurs="0" maxOccurs="1"/>
+    <element name="ccsInitImage" type="ocs:ccsInitImage_c" minOccurs="0" maxOccurs="1"/>
+    <element name="ccsSetFilter" type="ocs:ccsSetFilter_c" minOccurs="0" maxOccurs="1"/>
+    <element name="ccsTakeImages" type="ocs:ccsTakeImages_c" minOccurs="0" maxOccurs="1"/>
+   </choice>
+  </sequence>
+ </complexType>
+
+ <complexType id="calibrationCommand_s" name="calibrationCommand_s">
+  <annotation> <documentation> Calibration command sequence </documentation> </annotation>
+  <sequence>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element name="atmcsATTelescope" type="ocs:atmcsATTelescope_c" minOccurs="0" maxOccurs="1"/>
+    <element name="atecsATEnclosure" type="ocs:atecsATEnclosure_c" minOccurs="0" maxOccurs="1"/>
+    <element name="aticsInitGuiders" type="ocs:aticsInitGuiders_c" minOccurs="0" maxOccurs="1"/>
+    <element name="aticsSetFilter" type="ocs:aticsSetFilter_c" minOccurs="0" maxOccurs="1"/>
+    <element name="aticsTakeImages" type="ocs:aticsTakeImages_c" minOccurs="0" maxOccurs="1"/>
+    <element name="atscsInitGuiders" type="ocs:atscsInitGuiders_c" minOccurs="0" maxOccurs="1"/>
+    <element name="atscsSetDisperser" type="ocs:atscsSetDisperser_c" minOccurs="0" maxOccurs="1"/>
+    <element name="atscsSetFilter" type="ocs:atscsSetFilter_c" minOccurs="0" maxOccurs="1"/>
+    <element name="atscsTakeImages" type="ocs:atscsTakeImages_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cbpcsMaskWheel" type="ocs:cbpcsMaskWheel_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cbpcsMount" type="ocs:cbpcsMount_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cbpcsOff" type="ocs:cbpcsOff_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cbpcsOn" type="ocs:cbpcsOn_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cbpcsShutter" type="ocs:cbpcsShutter_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cbpcsStage" type="ocs:cbpcsStage_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cicsLaserLight" type="ocs:cicsLaserLight_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cicsLaserLightOff" type="ocs:cicsLaserLightOff_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cicsLaserLightOn" type="ocs:cicsLaserLightOn_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cicsLightControl" type="ocs:cicsLightControl_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cicsWhiteLight" type="ocs:cicsWhiteLight_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cicsWhiteLightOff" type="ocs:cicsWhiteLightOff_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cicsWhiteLightOn" type="ocs:cicsWhiteLightOn_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cimsDiodeControllerOff" type="ocs:cimsDiodeControllerOff_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cimsDiodeControllerOn" type="ocs:cimsDiodeControllerOn_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cimsScanDiode" type="ocs:cimsScanDiode_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cimsSEDOn" type="ocs:cimsSEDOn_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cimsSEDOff" type="ocs:cimsSEDOff_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cimsSEDPosition" type="ocs:cimsSEDPosition_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cimsSEDStartScan" type="ocs:cimsSEDStartScan_c" minOccurs="0" maxOccurs="1"/>
+    <element name="cscsScreen" type="ocs:cscsScreen_c" minOccurs="0" maxOccurs="1"/>
+    <element name="dimmcsEnclosure" type="ocs:dimmcsEnclosure_c" minOccurs="0" maxOccurs="1"/>
+    <element name="dimmcsTakeImages" type="ocs:dimmcsTakeImages_c" minOccurs="0" maxOccurs="1"/>
+    <element name="dimmcsTarget" type="ocs:dimmcsTarget_c" minOccurs="0" maxOccurs="1"/>
+    <element name="emcsVisASCamOn" type="ocs:emcsVisASCamOn_c" minOccurs="0" maxOccurs="1"/>
+    <element name="emcsVisASCamOff" type="ocs:emcsVisASCamOff_c" minOccurs="0" maxOccurs="1"/>
+    <element name="emcsIRASCamOn" type="ocs:emcsIRASCamOn_c" minOccurs="0" maxOccurs="1"/>
+    <element name="emcsIRASCamOff" type="ocs:emcsIRASCamOff_c" minOccurs="0" maxOccurs="1"/>
+   </choice>
+  </sequence>
+ </complexType>
+
+ <complexType id="genericCommand_s" name="genericCommand_s">
+  <annotation> <documentation> Generic command sequence </documentation> </annotation>
+  <sequence>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element name="disable" type="ocs:Disable_c" minOccurs="0" maxOccurs="1"/>
+    <element name="enable" type="ocs:Enable_c" minOccurs="0" maxOccurs="1"/>
+    <element name="entercontrol" type="ocs:EnterControl_c" minOccurs="0" maxOccurs="1"/>
+    <element name="exitcontrol" type="ocs:ExitControl_c" minOccurs="0" maxOccurs="1"/>
+    <element name="setvalue" type="ocs:SetValue_c" minOccurs="0" maxOccurs="1"/>
+    <element name="standby" type="ocs:Standby_c" minOccurs="0" maxOccurs="1"/>
+    <element name="start" type="ocs:Start_c" minOccurs="0" maxOccurs="1"/>
+   </choice>
+  </sequence>
+ </complexType>
+
+ <complexType id="scriptCommand_s" name="scriptCommand_s">
+  <annotation> <documentation> Script command sequence </documentation> </annotation>
+  <sequence>
+    <element name="waitForEvents" type="ocs:WaitForEvents_c" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+ </complexType>
+
+ <complexType id="telescopeCommand_s" name="telescopeCommand_s">
+  <annotation> <documentation> Telescope command sequence </documentation> </annotation>
+  <sequence>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element name="tcsCalibration" type="ocs:tcsCalibration_c" minOccurs="0" maxOccurs="1"/>
+    <element name="tcsTarget" type="ocs:tcsTarget_c" minOccurs="0" maxOccurs="1"/>
+   </choice>
+  </sequence>
+ </complexType>
+
+ <complexType id="ocsCommand_s" name="ocsCommand_s">
+  <annotation> <documentation> OCS command sequence </documentation> </annotation>
+  <sequence>
+   <choice minOccurs="1" maxOccurs="unbounded">
+    <element name="businessLogicCommandSequence" type="ocs:businessLogicCommand_s" minOccurs="0" maxOccurs="unbounded"/>
+    <element name="genericCommandSequence" type="ocs:genericCommand_s" minOccurs="0" maxOccurs="unbounded"/>
+    <element name="calibrationCommandSequence" type="ocs:calibrationCommand_s" minOccurs="0" maxOccurs="unbounded"/>
+    <element name="cameraCommandSequence" type="ocs:cameraCommand_s" minOccurs="0" maxOccurs="unbounded"/>
+    <element name="scriptCommandSequence" type="ocs:scriptCommand_s" minOccurs="0" maxOccurs="unbounded"/>
+    <element name="telescopeCommandSequence" type="ocs:telescopeCommand_s" minOccurs="0" maxOccurs="unbounded"/>
+   </choice>
+  </sequence>
+  <attribute name="Date" type="dateTime" use="required"/>
+  <attribute name="OnError" type="ocs:Error_e" use="required"/>
+ </complexType>
+
+ <!-- root element -->
+ <element name="ocsCommandSequence" type="ocs:ocsCommand_s"/>
+</schema>

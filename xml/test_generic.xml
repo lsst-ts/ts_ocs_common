@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T08:40:51.678" OnError="Continue">
+
+ <ocs:businessLogicCommandSequence>
+
+  <!-- abort command test -->
+  <ocs:abort Entity="Camera"/>
+
+  <!-- stop command test -->
+  <ocs:stop Entity="Camera">
+   <ocs:Device>camera</ocs:Device>
+  </ocs:stop>
+
+ </ocs:businessLogicCommandSequence>
+
+ <ocs:genericCommandSequence>
+
+  <!-- disable command test -->
+  <ocs:disable Entity="Camera"/>
+
+  <!-- enable command test -->
+  <ocs:enable Entity="Camera"/>
+
+  <!-- entercontrol command test -->
+  <ocs:entercontrol Entity="Camera"/>
+
+  <!-- exitcontrol command test -->
+  <ocs:exitcontrol Entity="Camera"/>
+
+  <!-- setValue command test -->
+  <ocs:setvalue Entity="Camera">
+   <ocs:Parameter>MyParameter</ocs:Parameter>
+   <ocs:Value>MyValue</ocs:Value>
+  </ocs:setvalue>
+
+  <!-- standy command test -->
+  <ocs:standby Entity="Camera"/>
+
+  <!-- start command test -->
+  <ocs:start Entity="Camera">
+   <ocs:StartId>CameraConfig</ocs:StartId>
+  </ocs:start>
+
+ </ocs:genericCommandSequence>
+</ocs:ocsCommandSequence>

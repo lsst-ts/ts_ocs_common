@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocs:ocsCommandSequence xmlns:ocs="http://project.lsst.org/ts" Date="2016-02-09T09:20:21.345" OnError="Abort">
+ <ocs:telescopeCommandSequence>
+
+  <!-- tcsCalibration command test -->
+  <ocs:tcsCalibration Entity="LSST">
+   <ocs:Calibration>None</ocs:Calibration>
+   <ocs:Elevation>45.5</ocs:Elevation>
+   <ocs:Azimuth>192.6</ocs:Azimuth>
+   <ocs:Rotator>33.4</ocs:Rotator>
+   <ocs:Dome>None</ocs:Dome>
+   <ocs:Optics>None</ocs:Optics>
+  </ocs:tcsCalibration>
+
+  <!-- tcsTarget command test -->
+  <ocs:tcsTarget Entity="LSST">
+   <ocs:AltAz>
+    <ocs:Altitude>59.999</ocs:Altitude>
+    <ocs:Azimuth>35.400</ocs:Azimuth>
+   </ocs:AltAz>
+   <ocs:Rotator>33.4</ocs:Rotator>
+   <ocs:WrapDirection>CCW</ocs:WrapDirection>
+   <ocs:TrackOptions>None</ocs:TrackOptions>
+   <ocs:GuiderOptions>false</ocs:GuiderOptions>
+   <ocs:DomeOptions>None</ocs:DomeOptions>
+   <ocs:Optics>None</ocs:Optics>
+  </ocs:tcsTarget>
+
+  <!-- tcsTarget command test -->
+  <ocs:tcsTarget Entity="LSST">
+   <ocs:J2000>
+    <ocs:RightAscension>23:59:59.999</ocs:RightAscension>
+    <ocs:Declination>35:59:15.400</ocs:Declination>
+    <ocs:Equinox>2015.5</ocs:Equinox>
+   </ocs:J2000>
+   <ocs:Rotator>33.4</ocs:Rotator>
+   <ocs:WrapDirection>CW</ocs:WrapDirection>
+   <ocs:TrackOptions>None</ocs:TrackOptions>
+   <ocs:GuiderOptions>false</ocs:GuiderOptions>
+   <ocs:DomeOptions>None</ocs:DomeOptions>
+   <ocs:Optics>None</ocs:Optics>
+  </ocs:tcsTarget>
+
+ </ocs:telescopeCommandSequence>
+</ocs:ocsCommandSequence>
