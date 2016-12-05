@@ -59,7 +59,7 @@ class OcsLogger(object):
         # logger dictionary
         logname = 'ocs.{0:s}.{1:s}'.format(self._name.lower(), self._subname.lower())
         logfile = '{0:s}/{1:s}.log'.format(OCS_LOGGER_DIR, logname)
-        ocslog = '{0:s}/ocs.log'.format(OCS_LOGGER_DIR)
+        ocslog = '{0:s}/{1:s}'.format(OCS_LOGGER_DIR, OCS_LOGGER_FILE)
         ocsLoggerDictionary = {
 
             # logging version
