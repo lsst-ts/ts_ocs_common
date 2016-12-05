@@ -57,8 +57,9 @@ class OcsLogger(object):
             self._subname = str(os.getpid())
 
         # logger dictionary
-        logname = 'ocs.{0:s}.{1:s}'.format(self._name.lower(),self._subname.lower())
-        logfile = '/tmp/ocs.{0:s}.{1:s}.log'.format(self._name.lower(),self._subname.lower())
+        logname = 'ocs.{0:s}.{1:s}'.format(self._name.lower(), self._subname.lower())
+        logfile = '{0:s}/{1:s}.log'.format(OCS_LOGGER_DIR, logname)
+        ocslog = '{0:s}/ocs.log'.format(OCS_LOGGER_DIR)
         ocsLoggerDictionary = {
 
             # logging version
@@ -98,7 +99,7 @@ class OcsLogger(object):
                     'backupCount' : 10,
                     'class' : 'logging.handlers.RotatingFileHandler',
                     'formatter' :'OcsFileFormatter',
-                    'filename' : OCS_LOGGER_FILE,
+                    'filename' : ocslog,
                     'level' : 'DEBUG',
                     'maxBytes' : 1048576
                 }
