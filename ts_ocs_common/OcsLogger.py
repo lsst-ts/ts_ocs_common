@@ -151,3 +151,4 @@ if __name__ == "__main__":
     camlog = OcsLogger('CCS', 'camera')
     camlog.logger.info(camlog.name)
     camlog.logger.info(camlog.subname)
+

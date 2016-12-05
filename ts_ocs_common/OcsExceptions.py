@@ -18,6 +18,7 @@ import os
 import re
 import socket
 
+
 # +
 # dunder string(s)
 # -
@@ -90,6 +91,7 @@ class OcsCameraEntityException(OcsGenericEntityException):
             self.errstr = "{0:s} ({1:s}), errval={2:d}".format(
                 ocsCameraEntityErrorDictionary[self.inval], str(self.instr), self.inval)
 
+
 # +
 # class: OcsXmlException inherits from base Exception class
 # -
@@ -118,6 +120,36 @@ class OcsXmlException(Exception):
         # format instr
         self.errstr = "{0:s} ({1:s}), errval={2:d}".format(
             ocsXmlErrorDictionary[self.inval], str(self.instr), self.inval)
+
+
+# +
+# class: OcsGeneralException inherits from base Exception class
+# -
+class OcsGeneralException(Exception):
+
+    # +
+    # __init__
+    # -
+    def __init__(self, inval=OCS_GENERAL_ERROR_NOERR, instr=pyvers):
+        """
+            :param inval: input error value [OCS_GENERAL_ERROR_NOERR]
+            :param instr: input string for extra context [pyvers]
+            :return: None but sets self.errstr
+        """
+
+        # declare some variables and initialize them
+        self.inval = inval
+        self.instr = instr
+        self.errstr = ''
+
+        # if inval is invalid, set default value
+        if not isinstance(inval, int) or self.inval not in ocsGeneralErrorDictionary:
+            self.instr = "inval={0:d}, instr=\'{1:s}\'".format(int(self.inval), str(self.instr))
+            self.inval = OCS_GENERAL_ERROR_NOERR
+
+        # format instr
+        self.errstr = "{0:s} ({1:s}), errval={2:d}".format(
+            ocsGeneralErrorDictionary[self.inval], str(self.instr), self.inval)
 
 
 # +

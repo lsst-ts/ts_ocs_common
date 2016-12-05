@@ -11,6 +11,7 @@ from __future__ import print_function
 # +
 # import(s)
 # -
+from OcsExceptions import *
 import argparse
 import re
 import sys
@@ -40,65 +41,64 @@ def ocs_get_sal_constants(sal_include='', output_file=''):
     """
 
     if not isinstance(sal_include, str) or sal_include == '':
-        print('Cannot find or input read file!')
+        raise OcsGeneralException(OCS_GENERAL_ERROR_NOFIL, "sal_include='{0:s}'".format(str(sal_include)))
 
     elif not isinstance(output_file, str) or output_file == '':
-        print('Cannot write to null or empty output file!')
+        raise OcsGeneralException(OCS_GENERAL_ERROR_NOFIL, "output_file='{0:s}'".format(str(output_file)))
 
-    else:
+    # declare some variables and initialize them
+    contents = []
+    patterns = [
+        r'#define\sSAL__OK',
+        r'#define\sSAL__ERR',
+        r'#define\sSAL__EVENT',
+        r'#define\sSAL__CMD'
+        ]
 
-        # declare some variables and initialize them
-        contents = []
-        patterns = [
-            r'#define\sSAL__OK',
-            r'#define\sSAL__ERR',
-            r'#define\sSAL__EVENT',
-            r'#define\sSAL__CMD'
-            ]
+    # get and parse the input file
+    try:
+        with open(sal_include, 'rb') as f:
+            for line in f:
+                for patt in patterns:
+                    if re.search(patt, line):
+                        _def, _var, _val = line.split()
+                        contents.append(_var + ' = ' + _val)
+    except IOError as e:
+        print(e.errstr)
 
-        # get and parse the input file
-        try:
-            with open(sal_include, 'rb') as f:
-                for line in f:
-                    for patt in patterns:
-                        if re.search(patt, line):
-                            _def, _var, _val = line.split()
-                            contents.append(_var + ' = ' + _val)
-        except IOError as e:
-            print(e.errstr)
+    # write the output file
+    try:
+        with open(output_file, 'wb') as f:
 
-        # write the output file
-        try:
-            with open(output_file, 'wb') as f:
+            # write out the header boilerplate
+            f.write('#!/usr/bin/env python\n')
+            f.write('# -*- coding: utf-8 -*-\n\n')
+            f.write('# +\n')
+            f.write('# Python 2.x -> 3.x compatability function(s)\n')
+            f.write('# -\n')
+            f.write('from __future__ import print_function\n\n')
+            f.write('# +\n')
+            f.write('# dunder string(s)\n')
+            f.write('# -\n')
+            f.write('__author__ = \"Philip N. Daly\"\n')
+            f.write('__copyright__ = u\"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."\n')
+            f.write('__date__ = \"31 October 2016\"\n')
+            f.write('__doc__ = \"\"\"SAL constatnts for Python in the OCS\"\"\"\n')
+            f.write('__email__ = \"pdaly@lsst.org\"\n')
+            f.write('__file__ = \"ocs_sal_constants.py\"\n')
+            f.write('__history__ = __date__ + \": \" + \"original version (\" + __email__ + \")\"\n')
+            f.write('__version__ = \"0.1.0\"\n\n')
+            f.write('# +\n')
+            f.write('# SAL constant(s)\n')
+            f.write('# -\n')
 
-               # write out the header boilerplate
-               f.write('#!/usr/bin/env python\n')
-               f.write('# -*- coding: utf-8 -*-\n\n')
-               f.write('# +\n')
-               f.write('# Python 2.x -> 3.x compatability function(s)\n')
-               f.write('# -\n')
-               f.write('from __future__ import print_function\n\n')
-               f.write('# +\n')
-               f.write('# dunder string(s)\n')
-               f.write('# -\n')
-               f.write('__author__ = \"Philip N. Daly\"\n')
-               f.write('__copyright__ = u\"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."\n')
-               f.write('__date__ = \"31 October 2016\"\n')
-               f.write('__doc__ = \"\"\"SAL constatnts for Python in the OCS\"\"\"\n')
-               f.write('__email__ = \"pdaly@lsst.org\"\n')
-               f.write('__file__ = \"ocs_sal_constants.py\"\n')
-               f.write('__history__ = __date__ + \": \" + \"original version (\" + __email__ + \")\"\n')
-               f.write('__version__ = \"0.1.0\"\n\n')
-               f.write('# +\n')
-               f.write('# SAL constant(s)\n')
-               f.write('# -\n')
-
-               # write out the contants from the contents list
-               if contents:
-                   for elem in contents:
-                       f.write(elem+'\n')
-        except IOError as e:
-            print(e.errstr)
+            # write out the contants from the contents list
+            if contents:
+                for elem in contents:
+                    f.write(elem+'\n')
+            f.write('\n')
+    except IOError as e:
+        print(e.errstr)
 
 
 # +
@@ -125,3 +125,4 @@ if __name__ == '__main__':
     else:
         print('No command line arguments specified')
         print('Use: python ' + sys.argv[0] + ' --help for more information')
+

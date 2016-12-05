@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 # +
 # Python 2.x -> 3.x compatability function(s)
 # -
 from __future__ import print_function
+
 
 # +
 # dunder string(s)
@@ -17,6 +19,7 @@ __email__ = "pdaly@lsst.org"
 __file__ = "ocs_sal_constants.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
 __version__ = "0.1.0"
+
 
 # +
 # SAL constant(s)
@@ -37,3 +40,4 @@ SAL__CMD_NOACK = -301
 SAL__CMD_FAILED = -302
 SAL__CMD_ABORTED = -303
 SAL__CMD_TIMEOUT = -304
+

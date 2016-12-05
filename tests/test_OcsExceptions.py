@@ -118,3 +118,33 @@ def test_xml_noexception():
     else:
         assert False
 
+
+# +
+# function: test_general_exception()
+# -
+def test_general_exception():
+    """
+        :return: true | false
+    """
+    try:
+        raise OcsGeneralException(OCS_GENERAL_ERROR_NOFIL, pyvers)
+    except OcsGeneralException as e:
+        assert True
+    else:
+        assert False
+
+
+# +
+# function: test_general_noexception()
+# -
+def test_general_noexception():
+    """
+        :return: true | false
+    """
+    try:
+        raise OcsGeneralException(-1, pyvers)
+    except OcsGeneralException as e:
+        assert True
+    else:
+        assert False
+

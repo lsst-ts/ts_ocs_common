@@ -16,6 +16,7 @@ import random
 import sys
 from ocs_sal_constants import *
 
+
 # +
 # dunder string(s)
 # -
@@ -70,6 +71,9 @@ OCS_XML_ERROR_NOXML = -301
 OCS_XML_ERROR_NOPRS = -302
 OCS_XML_ERROR_NOERR = -303
 
+OCS_GENERAL_ERROR_NOFIL = -300
+OCS_GENERAL_ERROR_NOERR = -301
+
 
 # +
 # dictionaries
@@ -114,6 +118,11 @@ ocsXmlErrorDictionary = {
     OCS_XML_ERROR_NOERR: "No valid error"
     }
 
+ocsGeneralErrorDictionary = {
+    OCS_GENERAL_ERROR_NOFIL: "No valid file",
+    OCS_GENERAL_ERROR_NOERR: "No valid error"
+    }
+
 ocsGenericEntitySystemDictionary = {
     "atcs": "ATCS",
     "calcs": "CALCS",
@@ -141,7 +150,8 @@ ocsGenericEntityEntityDictionary = {
 # +
 # format(s)
 # -
-OCS_LOGGER_FILE = '/tmp/ocs.log'
+OCS_LOGGER_DIR = '/tmp'
+OCS_LOGGER_FILE = 'ocs.log'
 OCS_LOGGER_FILE_FORMAT = '%(asctime)-20s %(levelname)-9s %(name)-15s %(filename)-15s %(funcName)-15s line:%(lineno)-5d PID:%(process)-6d Message: %(message)s'
 OCS_LOGGER_CONSOLE_FORMAT = '%(asctime)-20s %(levelname)-9s %(filename)-15s %(funcName)-15s line:%(lineno)-5d Message: %(message)s'
 
@@ -158,3 +168,4 @@ MJD_PATTERN = '^[0-9]{5}\.[0-9]{17}'
 # -
 pyvers = 'Python v' + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + '.' + str(sys.version_info[2])
 rseed = random.seed(os.getpid())
+
