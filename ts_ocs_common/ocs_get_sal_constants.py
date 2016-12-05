@@ -64,7 +64,7 @@ def ocs_get_sal_constants(sal_include='', output_file=''):
                         _def, _var, _val = line.split()
                         contents.append(_var + ' = ' + _val)
     except IOError as e:
-        print(e.errstr)
+        print(e)
 
     # write the output file
     try:
@@ -73,10 +73,12 @@ def ocs_get_sal_constants(sal_include='', output_file=''):
             # write out the header boilerplate
             f.write('#!/usr/bin/env python\n')
             f.write('# -*- coding: utf-8 -*-\n\n')
+            f.write('\n')
             f.write('# +\n')
             f.write('# Python 2.x -> 3.x compatability function(s)\n')
             f.write('# -\n')
             f.write('from __future__ import print_function\n\n')
+            f.write('\n')
             f.write('# +\n')
             f.write('# dunder string(s)\n')
             f.write('# -\n')
@@ -88,6 +90,7 @@ def ocs_get_sal_constants(sal_include='', output_file=''):
             f.write('__file__ = \"ocs_sal_constants.py\"\n')
             f.write('__history__ = __date__ + \": \" + \"original version (\" + __email__ + \")\"\n')
             f.write('__version__ = \"0.1.0\"\n\n')
+            f.write('\n')
             f.write('# +\n')
             f.write('# SAL constant(s)\n')
             f.write('# -\n')
@@ -98,7 +101,7 @@ def ocs_get_sal_constants(sal_include='', output_file=''):
                     f.write(elem+'\n')
             f.write('\n')
     except IOError as e:
-        print(e.errstr)
+        print(e)
 
 
 # +
