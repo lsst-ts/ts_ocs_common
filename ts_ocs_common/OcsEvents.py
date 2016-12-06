@@ -64,24 +64,32 @@ class OcsEvents(object):
         self.__mgr = None
 
         self.__address = None
+        self.__command_source = None
+        self.__command_sent = None
         self.__handler = None
         self.__identifier = None
         self.__match = None
         self.__name = None
         self.__priority = None
+        self.__return_value = None
         self.__retval = None
+        self.__sequence_number = None
+        self.__status_value = None
+        self.__status = None
         self.__timestamp = None
 
         # container(s)
         self.__ocsCommandableEntityStartupC = None
         self.__ocsCommandableEntityShutdownC = None
         self.__ocsCommandIssuedC = None
+        self.__ocsCommandStatusC = None
 
         # event handlers
         self.__event_handlers = {
             'ocsCommandableEntityStartup': self._ocsCommandableEntityStartup,
             'ocsCommandableEntityShutdown': self._ocsCommandableEntityShutdown,
-            'ocsCommandIssued': self._ocsCommandIssued
+            'ocsCommandIssued': self._ocsCommandIssued,
+            'ocsCommandStatus': self._ocsCommandStatus
             }
 
         # import the SAL (cf. from SALPY_ocs import *)
@@ -103,6 +111,7 @@ class OcsEvents(object):
         self.__ocsCommandableEntityStartupC = self._get_sal_logC('ocsCommandableEntityStartup')
         self.__ocsCommandableEntityShutdownC = self._get_sal_logC('ocsCommandableEntityShutdown')
         self.__ocsCommandIssuedC = self._get_sal_logC('ocsCommandIssued')
+        self.__ocsCommandStatusC = self._get_sal_logC('ocsCommandStatus')
 
         # set up a default event (cf. mgr.salEvent("ocs_logevent_ocsCommandableEntityStartup"))
         cname = 'ocs_logevent_ocsCommandableEntityStartup'
@@ -127,15 +136,19 @@ class OcsEvents(object):
     # -
     def sendEvent(self, event='', **kwargs):
         self.logger.debug("sendEvent() enter")
+
         # check input(s)
         if not isinstance(event, str) or event == '':
             raise OcsGenericException(OCS_GENERIC_ENTITY_ERROR_NOVAL, "event={0:s}".format(str(event)))
         else:
             self._event = event
+
         # in simulation, sleep for a random time
         if self._simulate:
             stime = time.sleep(random.uniform(0, 5))
             self.logger.debug("sendEvent(), in simulation with sleep={0:s}".format(str(stime)))
+
+        # invoke handler
         else:
             self.__handler = self.__event_handlers.get(event, None)
             if self.__handler:
@@ -147,11 +160,11 @@ class OcsEvents(object):
     # (hidden) method: ocsCommandableEntityStartup()
     # -
     def _ocsCommandableEntityStartup(self, **kwargs):
+        self.logger.debug("_ocsCommandableEntityStartup() enter")
         if self.__mgr and self.__ocsCommandableEntityStartupC:
-            self.logger.debug("ocsCommandableEntityStartup() enter")
             if kwargs:
                 for k, v in kwargs.items():
-                    self.logger.debug("ocsCommandableEntityStartup(), {0:s}={1:s}".format(str(k),str(v)))
+                    self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
 
                 # get values from kwargs dictionary
                 self.__address = kwargs.get('Address', SAL__ERROR)
@@ -159,6 +172,7 @@ class OcsEvents(object):
                 self.__name = kwargs.get('Name', os.getenv('USER'))
                 self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
                 self.__timestamp = kwargs.get('Timestamp', '')
+
                 self.__match = re.search(ISO_PATTERN, self.__timestamp)
                 if not self.__match:
                     self.__timestamp = ocs_mjd_to_iso(self.__identifier)
@@ -170,12 +184,6 @@ class OcsEvents(object):
                 self.__ocsCommandableEntityStartupC.Address = long(self.__address)
                 self.__ocsCommandableEntityStartupC.priority = int(self.__priority)
 
-                self.logger.debug("Name={0:s}".format(self.__ocsCommandableEntityStartupC.Name))
-                self.logger.debug("Identifier={0:f}".format(self.__ocsCommandableEntityStartupC.Identifier))
-                self.logger.debug("Timestamp={0:s}".format(self.__ocsCommandableEntityStartupC.Timestamp))
-                self.logger.debug("Address={0:d}".format(self.__ocsCommandableEntityStartupC.Address))
-                self.logger.debug("priority={0:d}".format(self.__ocsCommandableEntityStartupC.priority))
-
                 # set up event (cf. mgr.salEvent("ocs_logevent_ocsCommandableEntityStartup"))
                 lname = 'ocs_logevent_{0:s}'.format(self._event)
                 self.logger.debug("setting up for event {0:s}".format(lname))
@@ -185,18 +193,18 @@ class OcsEvents(object):
                 self.logger.debug("issuing event {0:s}".format(lname))
                 self.__retval = self.__mgr.logEvent_ocsCommandableEntityStartup(self.__ocsCommandableEntityStartupC, self.__ocsCommandableEntityStartupC.priority)
                 self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-            self.logger.debug("ocsCommandableEntityStartup() exit")
+        self.logger.debug("_ocsCommandableEntityStartup() exit")
 
 
     # +
     # (hidden) method: ocsCommandableEntityShutdown()
     # -
     def _ocsCommandableEntityShutdown(self, **kwargs):
+        self.logger.debug("_ocsCommandableEntityShutdown() enter")
         if self.__mgr and self.__ocsCommandableEntityShutdownC:
-            self.logger.debug("ocsCommandableEntityShutdown() enter")
             if kwargs:
                 for k, v in kwargs.items():
-                    self.logger.debug("ocsCommandableEntityShutdown(), {0:s}={1:s}".format(str(k),str(v)))
+                    self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
 
                 # get values from kwargs dictionary
                 self.__address = kwargs.get('Address', SAL__ERROR)
@@ -204,6 +212,7 @@ class OcsEvents(object):
                 self.__name = kwargs.get('Name', os.getenv('USER'))
                 self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
                 self.__timestamp = kwargs.get('Timestamp', '')
+
                 self.__match = re.search(ISO_PATTERN, self.__timestamp)
                 if not self.__match:
                     self.__timestamp = ocs_mjd_to_iso(self.__identifier)
@@ -215,12 +224,6 @@ class OcsEvents(object):
                 self.__ocsCommandableEntityShutdownC.Address = long(self.__address)
                 self.__ocsCommandableEntityShutdownC.priority = int(self.__priority)
 
-                self.logger.debug("Name={0:s}".format(self.__ocsCommandableEntityShutdownC.Name))
-                self.logger.debug("Identifier={0:f}".format(self.__ocsCommandableEntityShutdownC.Identifier))
-                self.logger.debug("Timestamp={0:s}".format(self.__ocsCommandableEntityShutdownC.Timestamp))
-                self.logger.debug("Address={0:d}".format(self.__ocsCommandableEntityShutdownC.Address))
-                self.logger.debug("priority={0:d}".format(self.__ocsCommandableEntityShutdownC.priority))
-
                 # set up event (cf. mgr.salEvent("ocs_logevent_ocsCommandableEntityShutdown"))
                 lname = 'ocs_logevent_{0:s}'.format(self._event)
                 self.logger.debug("setting up for event {0:s}".format(lname))
@@ -230,17 +233,17 @@ class OcsEvents(object):
                 self.logger.debug("issuing event {0:s}".format(lname))
                 self.__retval = self.__mgr.logEvent_ocsCommandableEntityShutdown(self.__ocsCommandableEntityShutdownC, self.__ocsCommandableEntityShutdownC.priority)
                 self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-            self.logger.debug("ocsCommandableEntityShutdown() exit")
+        self.logger.debug("_ocsCommandableEntityShutdown() exit")
 
     # +
     # (hidden) method: ocsCommandIssued()
     # -
     def _ocsCommandIssued(self, **kwargs):
+        self.logger.debug("_ocsCommandIssued() enter")
         if self.__mgr and self.__ocsCommandIssuedC:
-            self.logger.debug("ocsCommandIssued() enter")
             if kwargs:
                 for k, v in kwargs.items():
-                    self.logger.debug("ocsCommandIssued(), {0:s}={1:s}".format(str(k),str(v)))
+                    self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
 
                 # get values from kwargs dictionary
                 self.__command_source = kwargs.get('CommandSource', '')
@@ -250,6 +253,7 @@ class OcsEvents(object):
                 self.__return_value = kwargs.get('ReturnValue', '')
                 self.__sequence_number = kwargs.get('SequenceNumber', '')
                 self.__timestamp = kwargs.get('Timestamp', '')
+
                 self.__match = re.search(ISO_PATTERN, self.__timestamp)
                 if not self.__match:
                     self.__timestamp = ocs_mjd_to_iso(self.__identifier)
@@ -263,14 +267,6 @@ class OcsEvents(object):
                 self.__ocsCommandIssuedC.SequenceNumber = long(self.__sequence_number)
                 self.__ocsCommandIssuedC.Timestamp = str(self.__timestamp)
 
-                self.logger.debug("CommandSource={0:s}".format(self.__ocsCommandIssuedC.CommandSource))
-                self.logger.debug("CommandSent={0:s}".format(self.__ocsCommandIssuedC.CommandSent))
-                self.logger.debug("Identifier={0:f}".format(self.__ocsCommandIssuedC.Identifier))
-                self.logger.debug("priority={0:d}".format(self.__ocsCommandIssuedC.priority))
-                self.logger.debug("ReturnValue={0:d}".format(self.__ocsCommandIssuedC.ReturnValue))
-                self.logger.debug("SequenceNumber={0:d}".format(self.__ocsCommandIssuedC.SequenceNumber))
-                self.logger.debug("Timestamp={0:s}".format(self.__ocsCommandIssuedC.Timestamp))
-
                 # set up event (cf. mgr.salEvent("ocs_logevent_ocsCommandIssued"))
                 lname = 'ocs_logevent_{0:s}'.format(self._event)
                 self.logger.debug("setting up for event {0:s}".format(lname))
@@ -280,7 +276,52 @@ class OcsEvents(object):
                 self.logger.debug("issuing event {0:s}".format(lname))
                 self.__retval = self.__mgr.logEvent_ocsCommandIssued(self.__ocsCommandIssuedC, self.__ocsCommandIssuedC.priority)
                 self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-            self.logger.debug("ocsCommandIssued() exit")
+        self.logger.debug("_ocsCommandIssued() exit")
+
+    # +
+    # (hidden) method: ocsCommandStatus()
+    # -
+    def _ocsCommandStatus(self, **kwargs):
+        self.logger.debug("_ocsCommandStatus() enter")
+        if self.__mgr and self.__ocsCommandStatusC:
+            if kwargs:
+                for k, v in kwargs.items():
+                    self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+
+                # get values from kwargs dictionary
+                self.__command_source = kwargs.get('CommandSource', '')
+                self.__command_sent = kwargs.get('CommandSent', '')
+                self.__identifier = kwargs.get('Identifier', ocs_id(False))
+                self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
+                self.__status = kwargs.get('Status', '')
+                self.__status_value = kwargs.get('StatusValue', '')
+                self.__sequence_number = kwargs.get('SequenceNumber', '')
+                self.__timestamp = kwargs.get('Timestamp', '')
+
+                self.__match = re.search(ISO_PATTERN, self.__timestamp)
+                if not self.__match:
+                    self.__timestamp = ocs_mjd_to_iso(self.__identifier)
+
+                # set up payload (cf. data = ocs_logevent_ocsCommandStatus(); data.Name = 'Something')
+                self.__ocsCommandStatusC.CommandSource = str(self.__command_source)
+                self.__ocsCommandStatusC.CommandSent = str(self.__command_sent)
+                self.__ocsCommandStatusC.Identifier = float(self.__identifier)
+                self.__ocsCommandStatusC.priority = int(self.__priority)
+                self.__ocsCommandStatusC.Status = str(self.__status)
+                self.__ocsCommandStatusC.StatusValue = long(self.__status_value)
+                self.__ocsCommandStatusC.SequenceNumber = long(self.__sequence_number)
+                self.__ocsCommandStatusC.Timestamp = str(self.__timestamp)
+
+                # set up event (cf. mgr.salEvent("ocs_logevent_ocsCommandStatus"))
+                lname = 'ocs_logevent_{0:s}'.format(self._event)
+                self.logger.debug("setting up for event {0:s}".format(lname))
+                self.__mgr.salEvent(lname)
+
+                # issue event (cf. retval = mgr.logEvent_ocsCommandStatus(data, priority))
+                self.logger.debug("issuing event {0:s}".format(lname))
+                self.__retval = self.__mgr.logEvent_ocsCommandStatus(self.__ocsCommandStatusC, self.__ocsCommandStatusC.priority)
+                self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
+        self.logger.debug("_ocsCommandStatus() exit")
 
     # +
     # decorator(s)
