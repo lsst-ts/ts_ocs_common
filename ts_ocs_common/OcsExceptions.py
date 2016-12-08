@@ -93,16 +93,16 @@ class OcsCameraEntityException(OcsGenericEntityException):
 
 
 # +
-# class: OcsXmlException inherits from base Exception class
+# class: OcsEventsException inherits from base Exception class
 # -
-class OcsXmlException(Exception):
+class OcsEventsException(Exception):
 
     # +
     # __init__
     # -
-    def __init__(self, inval=OCS_XML_ERROR_NOERR, instr=pyvers):
+    def __init__(self, inval=OCS_EVENTS_ERROR_NOERR, instr=pyvers):
         """
-            :param inval: input error value [OCS_XML_ERROR_NOERR]
+            :param inval: input error value [OCS_EVENTS_ERROR_NOERR]
             :param instr: input string for extra context [pyvers]
             :return: None but sets self.errstr
         """
@@ -113,13 +113,13 @@ class OcsXmlException(Exception):
         self.errstr = ''
 
         # if inval is invalid, set default value
-        if not isinstance(inval, int) or self.inval not in ocsXmlErrorDictionary:
+        if not isinstance(inval, int) or self.inval not in ocsEventsErrorDictionary:
             self.instr = "inval={0:d}, instr=\'{1:s}\'".format(int(self.inval), str(self.instr))
-            self.inval = OCS_XML_ERROR_NOERR
+            self.inval = OCS_EVENTS_ERROR_NOERR
 
         # format instr
         self.errstr = "{0:s} ({1:s}), errval={2:d}".format(
-            ocsXmlErrorDictionary[self.inval], str(self.instr), self.inval)
+            ocsEventsErrorDictionary[self.inval], str(self.instr), self.inval)
 
 
 # +
@@ -153,12 +153,50 @@ class OcsGeneralException(Exception):
 
 
 # +
+# class: OcsXmlException inherits from base Exception class
+# -
+class OcsXmlException(Exception):
+
+    # +
+    # __init__
+    # -
+    def __init__(self, inval=OCS_XML_ERROR_NOERR, instr=pyvers):
+        """
+            :param inval: input error value [OCS_XML_ERROR_NOERR]
+            :param instr: input string for extra context [pyvers]
+            :return: None but sets self.errstr
+        """
+
+        # declare some variables and initialize them
+        self.inval = inval
+        self.instr = instr
+        self.errstr = ''
+
+        # if inval is invalid, set default value
+        if not isinstance(inval, int) or self.inval not in ocsXmlErrorDictionary:
+            self.instr = "inval={0:d}, instr=\'{1:s}\'".format(int(self.inval), str(self.instr))
+            self.inval = OCS_XML_ERROR_NOERR
+
+        # format instr
+        self.errstr = "{0:s} ({1:s}), errval={2:d}".format(
+            ocsXmlErrorDictionary[self.inval], str(self.instr), self.inval)
+
+
+# +
 # main()
 # -
 if __name__ == "__main__":
 
     # get a logger
     logger = OcsLogger().logger
+
+
+    # log all camera errors
+    for E in ocsCameraEntityErrorDictionary:
+        try:
+            raise OcsCameraEntityException(E, pyvers)
+        except OcsCameraEntityException as e:
+            logger.critical(e.errstr)
 
     # log all generic errors
     for E in ocsGenericEntityErrorDictionary:
@@ -167,11 +205,25 @@ if __name__ == "__main__":
         except OcsGenericEntityException as e:
             logger.critical(e.errstr)
 
-    # log all camera errors
-    for E in ocsCameraEntityErrorDictionary:
+    # log all general errors
+    for E in ocsGeneralErrorDictionary:
         try:
-            raise OcsCameraEntityException(E, pyvers)
-        except OcsCameraEntityException as e:
+            raise OcsGeneralException(E, pyvers)
+        except OcsGeneralException as e:
+            logger.critical(e.errstr)
+
+    # log all events errors
+    for E in ocsEventsErrorDictionary:
+        try:
+            raise OcsEventsException(E, pyvers)
+        except OcsEventsException as e:
+            logger.critical(e.errstr)
+
+    # log all xml errors
+    for E in ocsXmlErrorDictionary:
+        try:
+            raise OcsXmlException(E, pyvers)
+        except OcsXmlException as e:
             logger.critical(e.errstr)
 
     # try some unknown errors
@@ -184,11 +236,4 @@ if __name__ == "__main__":
         raise OcsCameraEntityException(-1, pyvers)
     except OcsCameraEntityException as e:
         logger.critical(e.errstr)
-
-    # log all xml errors
-    for E in ocsXmlErrorDictionary:
-        try:
-            raise OcsXmlException(E, pyvers)
-        except OcsXmlException as e:
-            logger.critical(e.errstr)
 
