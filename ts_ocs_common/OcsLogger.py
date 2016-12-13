@@ -30,7 +30,7 @@ __version__ = "0.1.0"
 
 
 # +
-# class: OcsLogger()
+# class: OcsLogger() inherits from the object class
 # -
 class OcsLogger(object):
 

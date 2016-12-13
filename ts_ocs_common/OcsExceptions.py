@@ -33,7 +33,7 @@ __version__ = "0.1.0"
 
 
 # +
-# class: OcsGenericEntityException inherits from base Exception class
+# class: OcsGenericEntityException() inherits from Exception class
 # -
 class OcsGenericEntityException(Exception):
 
@@ -63,7 +63,7 @@ class OcsGenericEntityException(Exception):
 
 
 # +
-# class: OcsCameraEntityException inherits from OcsGenericEntityException
+# class: OcsCameraEntityException() inherits from OcsGenericEntityException class
 # -
 class OcsCameraEntityException(OcsGenericEntityException):
 
@@ -93,7 +93,7 @@ class OcsCameraEntityException(OcsGenericEntityException):
 
 
 # +
-# class: OcsEventsException inherits from base Exception class
+# class: OcsEventsException() inherits from base Exception class
 # -
 class OcsEventsException(Exception):
 
@@ -123,7 +123,7 @@ class OcsEventsException(Exception):
 
 
 # +
-# class: OcsGeneralException inherits from base Exception class
+# class: OcsGeneralException() inherits from base Exception class
 # -
 class OcsGeneralException(Exception):
 
@@ -153,7 +153,7 @@ class OcsGeneralException(Exception):
 
 
 # +
-# class: OcsXmlException inherits from base Exception class
+# class: OcsXmlException() inherits from base Exception class
 # -
 class OcsXmlException(Exception):
 
