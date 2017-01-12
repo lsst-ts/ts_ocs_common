@@ -3,12 +3,6 @@
 
 
 # +
-# Python 2.x -> 3.x compatability function(s)
-# -
-from __future__ import print_function
-
-
-# +
 # import(s)
 # -
 from OcsExceptions import *
@@ -73,11 +67,6 @@ def ocs_get_sal_constants(sal_include='', output_file=''):
             # write out the header boilerplate
             f.write('#!/usr/bin/env python\n')
             f.write('# -*- coding: utf-8 -*-\n\n')
-            f.write('\n')
-            f.write('# +\n')
-            f.write('# Python 2.x -> 3.x compatability function(s)\n')
-            f.write('# -\n')
-            f.write('from __future__ import print_function\n\n')
             f.write('\n')
             f.write('# +\n')
             f.write('# dunder string(s)\n')

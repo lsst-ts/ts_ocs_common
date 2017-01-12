@@ -3,12 +3,6 @@
 
 
 # +
-# Python 2.x -> 3.x compatability function(s)
-# -
-from __future__ import print_function
-
-
-# +
 # dunder string(s)
 # -
 __author__ = "Philip N. Daly"

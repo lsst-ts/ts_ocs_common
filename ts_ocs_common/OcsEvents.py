@@ -3,12 +3,6 @@
 
 
 # +
-# Python 2.x -> 3.x compatability function(s)
-# -
-from __future__ import print_function
-
-
-# +
 # import(s)
 # -
 from ocs_common import *
@@ -23,7 +17,7 @@ from OcsLogger import *
 # -
 __author__ = "Philip N. Daly"
 __copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."
-__date__ = "30 November 2016"
+__date__ = "31 December 2016"
 __doc__ = """Events class for the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "OcsEvents.py"

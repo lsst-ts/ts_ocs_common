@@ -3,16 +3,10 @@
 
 
 # +
-# Python 2.x -> 3.x compatability function(s)
-# -
-from __future__ import print_function
-
-
-# +
 # import(s)
 # -
-from astropy.time import Time
 from ocs_common import *
+from astropy.time import Time
 import argparse
 import re
 import sys

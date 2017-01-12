@@ -3,12 +3,6 @@
 
 
 # +
-# Python 2.x -> 3.x compatability function(s)
-# -
-from __future__ import print_function
-
-
-# +
 # import(s)
 # -
 from OcsExceptions import *
@@ -181,6 +175,9 @@ class OcsEntryDialog(OcsDialog):
         if self.slist:
             for E in self.slist:
                 idx = self.slist.index(E)
+                k = str(E)
+                v = self.elist[idx].get()
+                self.logger.debug("Setting k={0:s}, v={1:s}".format(k, str(v)))
                 self.parent.result[str(E)] = self.elist[idx].get()
             self.logger.debug("Returning {0:s}".format(str(self.parent.result)))
             return 1
@@ -191,7 +188,8 @@ class OcsEntryDialog(OcsDialog):
     # (overridden) method: apply()
     # -
     def apply(self):
-        self.validate()
+        retval = self.validate()
+        self.logger.debug("retval={0:s}".format(str(retval)))
 
 
 # +
@@ -227,7 +225,8 @@ if __name__ == '__main__':
 
     # test the start widget
     elif args.start:
-        OcsEntryDialog(root, 'start()', ['StartId'])
+        x = OcsEntryDialog(root, 'start()', ['StartId'])
+        print(root.result)
 
     # test the stop widget
     elif args.stop:
