@@ -70,10 +70,6 @@ class OcsDialog(Toplevel):
         self.transient(self.parent)
         self.title = title
 
-        # set up logging
-        #self.logger = OcsLogger('OCS', 'Gui').logger
-        #self.logger.debug("Starting {0:s}".format(self.title))
-
         # create frame and buttons
         bd = Frame(self)
         bd.pack(padx=5, pady=5, expand=YES, fill=BOTH)
@@ -153,24 +149,26 @@ class OcsEntryDialog(OcsDialog):
     # (overridden) method: body()
     # -
     def body(self, parent=None, slist=[]):
-        self.elist = []
         self.slist = slist
-        if self.slist:
-            for E in self.slist:
-                idx = self.slist.index(E)
-                Label(parent, text=E).grid(row=idx, column=0)
-                iex = Entry(parent)
-                iex.grid(row=idx, column=1)
-                self.elist.append(iex)
-            return self.elist[0]
-        else:
+        self.elist = []
+
+        if not self.slist:
             return None
+
+        for E in self.slist:
+            idx = self.slist.index(E)
+            Label(parent, text=E).grid(row=idx, column=0)
+            iex = Entry(parent)
+            iex.grid(row=idx, column=1)
+            self.elist.append(iex)
+        return self.elist[0]
 
     # +
     # (overridden) method: validate()
     # -
     def validate(self):
         self.parent.result = {}
+
         if not self.slist:
             return 0
 
@@ -180,7 +178,6 @@ class OcsEntryDialog(OcsDialog):
             if vp:
                 self.parent.result[k] = str(vp.get())
 
-        #self.logger.debug("self.parent.result = {0:s}".format(str(self.parent.result)))
         if not self.parent.result:
             return 0
         else:

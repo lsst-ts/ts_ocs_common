@@ -61,6 +61,8 @@ OCS_EVENTS_ERROR_NOERR = -2002
 OCS_GENERAL_ERROR_NOFIL = -3000
 OCS_GENERAL_ERROR_NOERR = -3001
 
+OCS_GENERIC_ENTITY_BACKGROUND_COLOUR = '#f0f8ff'
+
 OCS_GENERIC_ENTITY_ERROR_NOSYS = -4000
 OCS_GENERIC_ENTITY_ERROR_NOENT = -4001
 OCS_GENERIC_ENTITY_ERROR_NOPAR = -4002
@@ -159,6 +161,17 @@ ocsGenericEntityEntityDictionary = {
     "SFCS": ['AirConditioning', 'PowerConditioning'],
     "TCS": ['Mount', 'Enclosure'],
     "TEST": ['Test']
+    }
+
+ocsGenericEntityBackgroundColour = {
+    'ATCS': '#fff8dc',
+    'CALCS': '#fffff0',
+    'CCS': '#fffacd',
+    'DMCS': '#fff5ee',
+    'EMCS': '#f0fff0',
+    'SFCS': '#f5fffa',
+    'TCS': '#f0ffff',
+    'TEST': OCS_GENERIC_ENTITY_BACKGROUND_COLOUR
     }
 
 
