@@ -18,8 +18,8 @@ from tkMessageBox import *
 # dunder string(s)
 # -
 __author__ = "Philip N. Daly"
-__copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."
-__date__ = "31 October 2016"
+__copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2017. All rights reserved. Released under the GPL."
+__date__ = "15 January 2017"
 __doc__ = """Common TkInter code for the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "OcsGui.py"
@@ -71,8 +71,8 @@ class OcsDialog(Toplevel):
         self.title = title
 
         # set up logging
-        self.logger = OcsLogger('OCS', 'Gui').logger
-        self.logger.debug("Starting {0:s}".format(self.title))
+        #self.logger = OcsLogger('OCS', 'Gui').logger
+        #self.logger.debug("Starting {0:s}".format(self.title))
 
         # create frame and buttons
         bd = Frame(self)
@@ -122,7 +122,6 @@ class OcsDialog(Toplevel):
     # method: cancel()
     #-
     def cancel(self, event=None):
-        self.parent.result = {}
         self.parent.focus_set()
         self.destroy()
 
@@ -172,24 +171,26 @@ class OcsEntryDialog(OcsDialog):
     # -
     def validate(self):
         self.parent.result = {}
-        if self.slist:
-            for E in self.slist:
-                idx = self.slist.index(E)
-                k = str(E)
-                v = self.elist[idx].get()
-                self.logger.debug("Setting k={0:s}, v={1:s}".format(k, str(v)))
-                self.parent.result[str(E)] = self.elist[idx].get()
-            self.logger.debug("Returning {0:s}".format(str(self.parent.result)))
-            return 1
-        else:
+        if not self.slist:
             return 0
+
+        for k in self.slist:
+            idx = self.slist.index(k)
+            vp = self.elist[idx]
+            if vp:
+                self.parent.result[k] = str(vp.get())
+
+        #self.logger.debug("self.parent.result = {0:s}".format(str(self.parent.result)))
+        if not self.parent.result:
+            return 0
+        else:
+            return 1
 
     # +
     # (overridden) method: apply()
     # -
     def apply(self):
-        retval = self.validate()
-        self.logger.debug("retval={0:s}".format(str(retval)))
+        self.validate()
 
 
 # +
@@ -207,50 +208,38 @@ if __name__ == '__main__':
     group = parser.add_mutually_exclusive_group()
 
     # add exclusive argument(s)
-    group.add_argument('-f', '--setfilter', action="store_true", help="Test the setFilter widget")
-    group.add_argument('-g', '--initguiders', action="store_true", help="Test the initGuiders widget")
-    group.add_argument('-i', '--initimage', action="store_true", help="Test the initImage widget")
-    group.add_argument('-p', '--setvalue', action="store_true", help="Test the setValue widget")
+    group.add_argument('-1', '--single', action="store_true", help="Test the single entry widget")
+    group.add_argument('-2', '--double', action="store_true", help="Test the double entry widget")
+    group.add_argument('-3', '--triple', action="store_true", help="Test the triple entry widget")
+    group.add_argument('-4', '--quad', action="store_true", help="Test the quad entry widget")
     group.add_argument('-q', '--quit', action="store_true", help="Test the quit widget")
-    group.add_argument('-s', '--start', action="store_true", help="Test the start widget")
-    group.add_argument('-t', '--takeimages', action="store_true", help="Test the takeImages widget")
-    group.add_argument('-x', '--stop', action="store_true", help="Test the stop widget")
 
     # parse the command line arguments
     args = parser.parse_args()
 
-    # test the parameter-value widget
-    if args.setvalue:
-        OcsEntryDialog(root, 'setValue()', ['Parameter', 'Value'])
+    # test the single entry widget
+    if args.single:
+        OcsEntryDialog(root, 'Test Of Single Entry Widget', ['Input 1'])
+        print("Returned dictionary = {0:s}".format(root.result))
 
-    # test the start widget
-    elif args.start:
-        x = OcsEntryDialog(root, 'start()', ['StartId'])
-        print(root.result)
+    # test the double entry widget
+    elif args.double:
+        OcsEntryDialog(root, 'Test Of Double Entry Widget', ['Input 1', 'Input 2'])
+        print("Returned dictionary = {0:s}".format(root.result))
 
-    # test the stop widget
-    elif args.stop:
-        OcsEntryDialog(root, 'stop()', ['Device'])
+    # test the trile entry widget
+    elif args.triple:
+        OcsEntryDialog(root, 'Test Of Triple Entry Widget', ['Input 1', 'Input 2', 'Input 3'])
+        print("Returned dictionary = {0:s}".format(root.result))
+
+    # test the quad entry widget
+    elif args.quad:
+        OcsEntryDialog(root, 'Test Of Quad Entry Widget', ['Input 1', 'Input 2', 'Input 3', 'Input 4'])
+        print("Returned dictionary = {0:s}".format(root.result))
 
     # test the quit widget
     elif args.quit:
         OcsQuitButton(root).mainloop()
-
-    # test the initguiders widget
-    elif args.initguiders:
-        OcsEntryDialog(root, 'initGuider()', ['roiSpec'])
-
-    # test the initimage widget
-    elif args.initimage:
-        OcsEntryDialog(root, 'initImage()', ['deltaT'])
-
-    # test the setfilter widget
-    elif args.setfilter:
-        OcsEntryDialog(root, 'setFilter()', ['name'])
-
-    # test the takeimages widget
-    elif args.takeimages:
-        OcsEntryDialog(root, 'takeImages()', ['numImages', 'expTime', 'shutter', 'science', 'guide', 'wfs', 'imageSequenceName'])
 
     # nothing specified on the command line
     else:
