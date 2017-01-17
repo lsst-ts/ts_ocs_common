@@ -80,7 +80,7 @@ class OcsDialog(Toplevel):
         self.grab_set()
         if not self.initial_focus:
             self.initial_focus = self
-        self.protocol('WM_DELETE_WINDOW', self.parent.destroy)
+        self.protocol('WM_DELETE_WINDOW', self.destroy)
         self.initial_focus.focus_set()
         self.focus_set()
         self.wait_window(self)
@@ -119,7 +119,7 @@ class OcsDialog(Toplevel):
         self.update_idletasks()
         self.validate(True)
         self.parent.focus_set()
-        self.parent.destroy()
+        self.destroy()
 
     #+
     # method: cancel()
@@ -129,7 +129,7 @@ class OcsDialog(Toplevel):
         self.update_idletasks()
         self.validate(False)
         self.parent.focus_set()
-        self.parent.destroy()
+        self.destroy()
 
     #+
     # (override) method: body()
