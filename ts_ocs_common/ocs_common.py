@@ -133,6 +133,20 @@ ocsGenericEntityErrorDictionary = {
     OCS_GENERIC_ENTITY_ERROR_NOERR: "No valid generic error code defined"
     }
 
+
+ocsGenericEntityLogicDictionary = {
+    "active": True,
+    "enable": True,
+    "enabled": True,
+    "open": True,
+    "t": True,
+    "closed": False,
+    "disable": False,
+    "disabled": False,
+    "f": False,
+    "inactive": False,
+    }
+
 ocsXmlErrorDictionary = {
     OCS_XML_ERROR_NOXSD: "No valid schema file",
     OCS_XML_ERROR_NOXML: "No valid XML file",
