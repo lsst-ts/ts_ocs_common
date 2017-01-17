@@ -80,7 +80,7 @@ class OcsDialog(Toplevel):
         self.grab_set()
         if not self.initial_focus:
             self.initial_focus = self
-        self.protocol('WM_DELETE_WINDOW', self.cancel)
+        self.protocol('WM_DELETE_WINDOW', self.parent.destroy)
         self.initial_focus.focus_set()
         self.focus_set()
         self.wait_window(self)
@@ -91,35 +91,45 @@ class OcsDialog(Toplevel):
     def createButtons(self):
 
         # create buttons
-        box = Frame(self)
-        w = Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
-        w.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
-        w.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
-        w = Button(box, text='Cancel', width=10, command=self.cancel)
-        w.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
-        w.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
-        self.bind('<Return>', self.ok)
-        self.bind('<Escape>', self.cancel)
-        box.pack()
+        self.container = Frame(self)
+
+        self.ok_button = Button(self.container, text='OK', width=10, command=self.ok, default=ACTIVE)
+        self.ok_button.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
+        self.ok_button.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
+        self.ok_button.bind('<Return>', self.ok)
+        self.ok_button.bind('<Button-1>', self.ok)
+        self.ok_button.bind('<Button-3>', self.cancel)
+        self.ok_button.bind('<Escape>', self.cancel)
+
+        self.cancel_button = Button(self.container, text='Cancel', width=10, command=self.cancel)
+        self.cancel_button.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
+        self.cancel_button.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
+        self.cancel_button.bind('<Return>', self.cancel)
+        self.cancel_button.bind('<Button-1>', self.cancel)
+        self.cancel_button.bind('<Button-3>', self.cancel)
+        self.cancel_button.bind('<Escape>', self.cancel)
+
+        self.container.pack()
 
     #+
     # method: ok()
     #-
     def ok(self, event=None):
-        if not self.validate():
-            self.initial_focus.focus_set()
-            return
         self.withdraw()
         self.update_idletasks()
-        self.validate()
-        self.cancel()
+        self.validate(True)
+        self.parent.focus_set()
+        self.parent.destroy()
 
     #+
     # method: cancel()
     #-
     def cancel(self, event=None):
+        self.withdraw()
+        self.update_idletasks()
+        self.validate(False)
         self.parent.focus_set()
-        self.destroy()
+        self.parent.destroy()
 
     #+
     # (override) method: body()
@@ -130,13 +140,7 @@ class OcsDialog(Toplevel):
     #+
     # (override) method: validate()
     #-
-    def validate(self):
-        pass
-
-    #+
-    # (override) method: apply()
-    #-
-    def apply(self):
+    def validate(self, okb=False):
         pass
 
 
@@ -166,28 +170,20 @@ class OcsEntryDialog(OcsDialog):
     # +
     # (overridden) method: validate()
     # -
-    def validate(self):
-        self.parent.result = {}
+    def validate(self, okb=False):
+        self.okb = okb
 
-        if not self.slist:
-            return 0
-
-        for k in self.slist:
-            idx = self.slist.index(k)
-            vp = self.elist[idx]
-            if vp:
-                self.parent.result[k] = str(vp.get())
-
-        if not self.parent.result:
+        if self.okb:
+            self.parent.result = {}
+            for k in self.slist:
+                idx = self.slist.index(k)
+                vp = self.elist[idx]
+                if vp:
+                    self.parent.result[k] = str(vp.get())
             return 0
         else:
+            self.parent.result = {}
             return 1
-
-    # +
-    # (overridden) method: apply()
-    # -
-    def apply(self):
-        self.validate()
 
 
 # +
