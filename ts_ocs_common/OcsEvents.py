@@ -57,12 +57,18 @@ class OcsEvents(object):
         self.__mgr = None
 
         self.__address = None
+        self.__commands = None
         self.__command_source = None
         self.__command_sent = None
+        self.__commands = None
+        self.__configurations = None
+        self.__executing = None
         self.__method = None
         self.__identifier = None
         self.__match = None
         self.__name = None
+        self.__newstate = None
+        self.__oldstate = None
         self.__priority = None
         self.__return_value = None
         self.__retval = None
@@ -72,6 +78,7 @@ class OcsEvents(object):
         self.__timestamp = None
 
         # container(s)
+        self.__ocsEntitySummaryStateC = None
         self.__ocsEntityStartupC = None
         self.__ocsEntityShutdownC = None
         self.__ocsCommandIssuedC = None
@@ -79,6 +86,7 @@ class OcsEvents(object):
 
         # event methods
         self.__event_methods = {
+            'ocsEntitySummaryState': self._ocsEntitySummaryState,
             'ocsEntityStartup': self._ocsEntityStartup,
             'ocsEntityShutdown': self._ocsEntityShutdown,
             'ocsCommandIssued': self._ocsCommandIssued,
@@ -101,6 +109,7 @@ class OcsEvents(object):
             self.logger.debug("Got attribute {0:s} ok".format(aname))
 
         # get data structure(s) (cf. data = ocs_logevent_ocsEntityStartupC())
+        self.__ocsEntitySummaryStateC = self._get_sal_logC('ocsEntitySummaryState')
         self.__ocsEntityStartupC = self._get_sal_logC('ocsEntityStartup')
         self.__ocsEntityShutdownC = self._get_sal_logC('ocsEntityShutdown')
         self.__ocsCommandIssuedC = self._get_sal_logC('ocsCommandIssued')
@@ -149,6 +158,56 @@ class OcsEvents(object):
             if self.__method:
                 self.__method(**kwargs)
         self.logger.debug("sendEvent() exit")
+
+    # +
+    # (hidden) method: ocsEntitySummaryState()
+    # -
+    def _ocsEntitySummaryState(self, **kwargs):
+        self.logger.debug("_ocsEntitySummaryState() enter")
+        if self.__mgr and self.__ocsEntitySummaryStateC and kwargs:
+
+            # dump dictionary
+            for k, v in kwargs.items():
+                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+
+            # get values from kwargs dictionary
+            self.__address = kwargs.get('Address', SAL__ERROR)
+            self.__commands = kwargs.get('CommandsAvailable', '')
+            self.__configurations = kwargs.get('ConfigurationsAvailable', '')
+            self.__executing = kwargs.get('Executing', '')
+            self.__identifier = kwargs.get('Identifier', ocs_id(False))
+            self.__name = kwargs.get('Name', os.getenv('USER'))
+            self.__newstate = kwargs.get('NewState', 'UNKNOWN')
+            self.__oldstate = kwargs.get('OldState', 'UNKNOWN')
+            self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
+            self.__timestamp = kwargs.get('Timestamp', '')
+
+            self.__match = re.search(ISO_PATTERN, self.__timestamp)
+            if not self.__match:
+                self.__timestamp = ocs_mjd_to_iso(self.__identifier)
+
+            # set up payload (cf. data = ocs_logevent_ocsEntitySummaryState(); data.Name = 'Something')
+            self.__ocsEntitySummaryStateC.Address = long(self.__address)
+            self.__ocsEntitySummaryStateC.CommandsAvailable = str(self.__commands)
+            self.__ocsEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
+            self.__ocsEntitySummaryStateC.Executing = str(self.__executing)
+            self.__ocsEntitySummaryStateC.Identifier = float(self.__identifier)
+            self.__ocsEntitySummaryStateC.Name = str(self.__name)
+            self.__ocsEntitySummaryStateC.OldState = str(self.__oldstate)
+            self.__ocsEntitySummaryStateC.NewState = str(self.__newstate)
+            self.__ocsEntitySummaryStateC.priority = int(self.__priority)
+            self.__ocsEntitySummaryStateC.Timestamp = str(self.__timestamp)
+
+            # set up event (cf. mgr.salEvent("ocs_logevent_ocsEntitySummaryState"))
+            lname = 'ocs_logevent_{0:s}'.format(self._event)
+            self.logger.debug("setting up for event {0:s}".format(lname))
+            self.__mgr.salEvent(lname)
+
+            # issue event (cf. retval = mgr.logEvent_ocsEntitySummaryState(data, priority))
+            self.logger.debug("issuing event {0:s}".format(lname))
+            self.__retval = self.__mgr.logEvent_ocsEntitySummaryState(self.__ocsEntitySummaryStateC, self.__ocsEntitySummaryStateC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
+        self.logger.debug("_ocsEntitySummaryState() exit")
 
 
     # +

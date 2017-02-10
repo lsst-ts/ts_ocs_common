@@ -37,6 +37,7 @@ OCS_CAMERA_COMMAND_TIMEOUT = 5
 OCS_CAMERA_FILTER_COMMAND_TIMEOUT = 65
 OCS_CAMERA_IMAGE_COMMAND_TIMEOUT = 40
 OCS_GENERIC_COMMAND_TIMEOUT = 10
+OCS_SEQUENCER_COMMAND_TIMEOUT = 10
 
 
 # +
@@ -162,6 +163,7 @@ ocsGenericEntitySystemDictionary = {
     "ccs": "CCS",
     "dmcs": "DMCS",
     "emcs": "EMCS",
+    "ocs": "OCS",
     "sfcs": "SFCS",
     "tcs": "TCS",
     "test": "TEST"
@@ -174,6 +176,7 @@ ocsGenericEntityEntityDictionary = {
     "CCS": ['Camera'],
     "DMCS": ['Dm'],
     "EMCS": ['VisibleAllSkyCamera', 'InfraRedAllSkyCamera', 'DifferentialImageMotionMonitor'],
+    "OCS": ['ocs'],
     "SFCS": ['AirConditioning', 'PowerConditioning'],
     "TCS": ['Mount', 'Enclosure'],
     "TEST": ['Test']
@@ -185,6 +188,7 @@ ocsGenericEntityBackgroundColour = {
     'CCS': '#fffacd',
     'DMCS': '#fff5ee',
     'EMCS': '#f0fff0',
+    'OCS': OCS_GENERIC_ENTITY_BACKGROUND_COLOUR,
     'SFCS': '#f5fffa',
     'TCS': '#f0ffff',
     'TEST': OCS_GENERIC_ENTITY_BACKGROUND_COLOUR
