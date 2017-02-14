@@ -87,7 +87,6 @@ OCS_XML_ERROR_NOXML = -5001
 OCS_XML_ERROR_NOPRS = -5002
 OCS_XML_ERROR_NOERR = -5003
 
-
 # +
 # dictionaries
 # -
@@ -194,6 +193,42 @@ ocsGenericEntityBackgroundColour = {
     'TEST': OCS_GENERIC_ENTITY_BACKGROUND_COLOUR
     }
 
+# +
+# state machine crap
+# -
+OCS_SUMMARY_STATE_OFFLINE  = 0x1000
+OCS_SUMMARY_STATE_STANDBY  = 0x1001
+OCS_SUMMARY_STATE_DISABLED = 0x1002
+OCS_SUMMARY_STATE_ENABLED  = 0x1003
+OCS_SUMMARY_STATE_FAULT    = 0x1004
+OCS_SUMMARY_STATE_UNKNOWN  = 0x1005
+
+ocsEntitySummaryState = {
+    OCS_SUMMARY_STATE_OFFLINE: 'offline',
+    OCS_SUMMARY_STATE_STANDBY: 'standby',
+    OCS_SUMMARY_STATE_DISABLED: 'disabled',
+    OCS_SUMMARY_STATE_ENABLED: 'enabled',
+    OCS_SUMMARY_STATE_FAULT: 'fault',
+    OCS_SUMMARY_STATE_UNKNOWN: 'unknown'
+    }
+
+ocsEntitySummaryStateCommands = {
+    OCS_SUMMARY_STATE_OFFLINE: [ 'entercontrol' ],
+    OCS_SUMMARY_STATE_STANDBY: [ 'exitcontrol', 'start' ],
+    OCS_SUMMARY_STATE_DISABLED: [ 'enable', 'standby' ],
+    OCS_SUMMARY_STATE_ENABLED: [ 'abort', 'disable', 'setvalue', 'stop' ],
+    OCS_SUMMARY_STATE_FAULT: [],
+    OCS_SUMMARY_STATE_UNKNOWN: []
+    }
+
+ocsEntitySummaryStateConfigurations = {
+    OCS_SUMMARY_STATE_OFFLINE: [],
+    OCS_SUMMARY_STATE_STANDBY: [ 'Normal' ],
+    OCS_SUMMARY_STATE_DISABLED: [],
+    OCS_SUMMARY_STATE_ENABLED: [],
+    OCS_SUMMARY_STATE_FAULT: [],
+    OCS_SUMMARY_STATE_UNKNOWN: []
+    }
 
 # +
 # format(s)
