@@ -62,13 +62,13 @@ class OcsEvents(object):
         self.__command_sent = None
         self.__commands = None
         self.__configurations = None
+        self.__current_state = None
         self.__executing = None
         self.__method = None
         self.__identifier = None
         self.__match = None
         self.__name = None
-        self.__newstate = None
-        self.__oldstate = None
+        self.__previous_state = None
         self.__priority = None
         self.__return_value = None
         self.__retval = None
@@ -174,11 +174,11 @@ class OcsEvents(object):
             self.__address = kwargs.get('Address', SAL__ERROR)
             self.__commands = kwargs.get('CommandsAvailable', '')
             self.__configurations = kwargs.get('ConfigurationsAvailable', '')
+            self.__current_state = kwargs.get('CurrentState', 'UNKNOWN')
             self.__executing = kwargs.get('Executing', '')
             self.__identifier = kwargs.get('Identifier', ocs_id(False))
             self.__name = kwargs.get('Name', os.getenv('USER'))
-            self.__newstate = kwargs.get('NewState', 'UNKNOWN')
-            self.__oldstate = kwargs.get('OldState', 'UNKNOWN')
+            self.__previous_state = kwargs.get('PreviousState', 'UNKNOWN')
             self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
             self.__timestamp = kwargs.get('Timestamp', '')
 
@@ -190,11 +190,11 @@ class OcsEvents(object):
             self.__ocsEntitySummaryStateC.Address = long(self.__address)
             self.__ocsEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__ocsEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
+            self.__ocsEntitySummaryStateC.CurrentState = str(self.__current_state)
             self.__ocsEntitySummaryStateC.Executing = str(self.__executing)
             self.__ocsEntitySummaryStateC.Identifier = float(self.__identifier)
             self.__ocsEntitySummaryStateC.Name = str(self.__name)
-            self.__ocsEntitySummaryStateC.OldState = str(self.__oldstate)
-            self.__ocsEntitySummaryStateC.NewState = str(self.__newstate)
+            self.__ocsEntitySummaryStateC.PreviousState = str(self.__previous_state)
             self.__ocsEntitySummaryStateC.priority = int(self.__priority)
             self.__ocsEntitySummaryStateC.Timestamp = str(self.__timestamp)
 
