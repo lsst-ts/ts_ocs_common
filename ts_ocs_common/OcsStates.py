@@ -40,13 +40,15 @@ class OcsStates(object):
         """
 
         # declare some variables and initialize them
-        self._previous_state = OCS_SUMMARY_STATE_UNKNOWN
         self._current_state = OCS_SUMMARY_STATE_UNKNOWN
-        self._shutdown = False
-        self._flags = 0
+        self._previous_state = OCS_SUMMARY_STATE_UNKNOWN
         self._commands = ocsEntitySummaryStateCommands.get(self._current_state, [])
         self._configurations = ocsEntitySummaryStateConfigurations.get(self._current_state, [])
+        self._busy = 0
+        self._flags = 0
         self._lock = threading.Lock()
+        self._result = 0
+        self._shutdown = False
 
         # set up logging
         self.logger = OcsLogger('States', 'ocs').logger
@@ -117,9 +119,10 @@ class OcsStates(object):
             self._lock.acquire()
             try:
                 mask = 1 << offset
-                self._flags = (ivalue | mask)
+                self._result = (ivalue | mask)
             finally:
                 self._lock.release()
+            return self._result
 
     # +
     # method: clearBit()
@@ -130,9 +133,10 @@ class OcsStates(object):
             self._lock.acquire()
             try:
                 mask = ~(1 << offset)
-                self._flags = (ivalue & mask)
+                self._result = (ivalue & mask)
             finally:
                 self._lock.release()
+            return self._result
 
     # +
     # method: toggleBit()
@@ -143,9 +147,10 @@ class OcsStates(object):
             self._lock.acquire()
             try:
                 mask = 1 << offset
-                self._flags = (ivalue ^ mask)
+                self._result = (ivalue ^ mask)
             finally:
                 self._lock.release()
+            return self._result
 
     # +
     # decorator(s)
@@ -173,6 +178,8 @@ class OcsStates(object):
             self._lock.acquire()
             try:
                 self._current_state = current_state
+                self._commands = ocsEntitySummaryStateCommands.get(self._current_state, [])
+                self._configurations = ocsEntitySummaryStateConfigurations.get(self._current_state, [])
             finally:
                 self._lock.release()
 
@@ -182,6 +189,14 @@ class OcsStates(object):
 
     @flags.setter
     def flags(self, flags):
+        pass
+
+    @property
+    def busy(self):
+        return self._busy
+
+    @busy.setter
+    def busy(self, busy):
         pass
 
     @property
