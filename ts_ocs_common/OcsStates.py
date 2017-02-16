@@ -44,10 +44,9 @@ class OcsStates(object):
         self._previous_state = OCS_SUMMARY_STATE_UNKNOWN
         self._commands = ocsEntitySummaryStateCommands.get(self._current_state, [])
         self._configurations = ocsEntitySummaryStateConfigurations.get(self._current_state, [])
-        self._busy = 0
+        self._busy = False
         self._flags = 0
         self._lock = threading.Lock()
-        self._result = 0
         self._shutdown = False
 
         # set up logging
@@ -94,63 +93,50 @@ class OcsStates(object):
         self.logger.debug("Exiting change_state(from_state={0:s}, to_state={1:s})".format(str(from_state), str(to_state)))
             
     # +
-    # method: testBit()
+    # method: testFlag()
     # -
-    def testBit(self, ivalue=0, offset=0):
-        """ testBit() returns True if the bit at 'offset' is 1 else returns False """
-        if isinstance(ivalue, int) and isinstance(offset, int) and ivalue>=0 and offset>=0:
-            self._lock.acquire()
-            try:
-                mask = 1 << offset
-                result = (ivalue & mask)
-            finally:
-                self._lock.release()
-            if result > 0:
+    def testFlag(self, bit=0):
+        if isinstance(bit, int) and bit>=0:
+            if (self._flags & (1 << bit)) > 0:
                 return True
             else:
                 return False
 
     # +
-    # method: setBit()
+    # method: setFlag()
     # -
-    def setBit(self, ivalue=0, offset=0):
-        """ setBit() returns an integer with the bit at 'offset' set to 1 """
-        if isinstance(ivalue, int) and isinstance(offset, int) and ivalue>=0 and offset>=0:
+    def setFlag(self, bit=0):
+        if isinstance(bit, int) and bit>=0:
             self._lock.acquire()
             try:
-                mask = 1 << offset
-                self._result = (ivalue | mask)
+                mask = 1 << bit
+                self._flags = (self._flags | mask)
             finally:
                 self._lock.release()
-            return self._result
 
     # +
-    # method: clearBit()
+    # method: clearFlag()
     # -
-    def clearBit(self, ivalue=0, offset=0):
-        """ clearBit() returns an integer with the bit at 'offset' cleared """
-        if isinstance(ivalue, int) and isinstance(offset, int) and ivalue>=0 and offset>=0:
+    def clearFlag(self, bit=0):
+        if isinstance(bit, int) and bit>=0:
             self._lock.acquire()
             try:
-                mask = ~(1 << offset)
-                self._result = (ivalue & mask)
+                mask = ~(1 << bit)
+                self._flags = (self._flags & mask)
             finally:
                 self._lock.release()
-            return self._result
 
     # +
-    # method: toggleBit()
+    # method: toggleFlag()
     # -
-    def toggleBit(self, ivalue=0, offset=0):
-        """ toggleBit() returns an integer with the bit at 'offset' inverted, 0 -> 1 and 1 -> 0 """
-        if isinstance(ivalue, int) and isinstance(offset, int) and ivalue>=0 and offset>=0:
+    def toggleFlag(self, bit=0):
+        if isinstance(bit, int) and bit>=0:
             self._lock.acquire()
             try:
-                mask = 1 << offset
-                self._result = (ivalue ^ mask)
+                mask = 1 << bit
+                self._flags = (self._flags ^ mask)
             finally:
                 self._lock.release()
-            return self._result
 
     # +
     # decorator(s)
@@ -197,7 +183,12 @@ class OcsStates(object):
 
     @busy.setter
     def busy(self, busy):
-        pass
+        if isinstance(busy, bool):
+            self._lock.acquire()
+            try:
+                self._busy = busy
+            finally:
+                self._lock.release()
 
     @property
     def shutdown(self):
@@ -216,9 +207,18 @@ class OcsStates(object):
     # method: __str__
     # -
     def __str__(self):
-        return 'OcsStates(previous_state={0:s}, current_state={1:s}, shutdown={2:s}), address {3:s}'.format(
-            str(self._previous_state), str(self._current_state), str(self._shutdown), hex(id(self)))
-
+        v0 = 'current_state={0:s} '.format(str(self._current_state))
+        v1 = 'current_state_str={0:s} '.format(ocsEntitySummaryState.get(self._current_state, ''))
+        v2 = 'previous_state={0:s} '.format(str(self._previous_state))
+        v3 = 'previous_state_str={0:s} '.format(ocsEntitySummaryState.get(self._previous_state, ''))
+        v4 = 'commands={0:s} '.format(str(ocsEntitySummaryStateCommands.get(self._current_state, [])))
+        v5 = 'configurations={0:s} '.format(str(ocsEntitySummaryStateConfigurations.get(self._current_state, [])))
+        v6 = 'busy={0:s} '.format(str(self._busy))
+        v7 = 'shutdown={0:s} '.format(str(self._shutdown))
+        v8 = 'flags={0:s} '.format(str(self._flags))
+        v9 = 'lock={0:s} '.format(str(self._lock))
+        va = 'address={0:s}'.format(str(hex(id(self))))
+        return 'OcsStates(): {0:s}'.format(v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9 +va)
 
 # +
 # main()
@@ -232,37 +232,32 @@ if __name__ == "__main__":
         # log status
         stalog = states.logger
         stalog.info('{0:s}'.format(states.__str__()))
-        stalog.info('states._previous_state={0:s}'.format(str(states._previous_state)))
-        stalog.info('states._current_state={0:s}'.format(str(states._current_state)))
-        stalog.info('states._commands={0:s}'.format(str(states._commands)))
-        stalog.info('states._configurations={0:s}'.format(str(states._configurations)))
-        stalog.info('states._shutdown={0:s}'.format(str(states._shutdown)))
 
         # set some flags
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_ABORT_OFFSET)
+        states.setFlag(OCS_SEQUENCER_ABORT_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_DISABLE_OFFSET)
+        states.setFlag(OCS_SEQUENCER_DISABLE_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_ENABLE_OFFSET)
+        states.setFlag(OCS_SEQUENCER_ENABLE_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_ENTERCONTROL_OFFSET)
+        states.setFlag(OCS_SEQUENCER_ENTERCONTROL_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_EXITCONTROL_OFFSET)
+        states.setFlag(OCS_SEQUENCER_EXITCONTROL_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_SETVALUE_OFFSET)
+        states.setFlag(OCS_SEQUENCER_SETVALUE_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_STANDBY_OFFSET)
+        states.setFlag(OCS_SEQUENCER_STANDBY_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_START_OFFSET)
+        states.setFlag(OCS_SEQUENCER_START_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_STOP_OFFSET)
+        states.setFlag(OCS_SEQUENCER_STOP_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_SEQUENCE_OFFSET)
+        states.setFlag(OCS_SEQUENCER_SEQUENCE_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_SCRIPT_OFFSET)
+        states.setFlag(OCS_SEQUENCER_SCRIPT_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setBit(states._flags, OCS_SEQUENCER_SHUTDOWN_OFFSET)
+        states.setFlag(OCS_SEQUENCER_SHUTDOWN_OFFSET)
         stalog.info('states._flags={0:s}'.format(str(states._flags)))
 
         # change state
