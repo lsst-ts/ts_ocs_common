@@ -85,7 +85,7 @@ class OcsStates(object):
         self._lock = threading.Lock()
         self._shutdown = False
 
-        self.flags = 0
+        self._flags = 0
 
         # set up logging
         self.logger = OcsLogger('States', 'ocs').logger
@@ -139,7 +139,7 @@ class OcsStates(object):
     # -
     def test_flag(self, bit=0):
         if isinstance(bit, int) and bit >= 0:
-            if (self.flags & (1 << bit)) > 0:
+            if (self._flags & (1 << bit)) > 0:
                 return True
             else:
                 return False
@@ -152,7 +152,7 @@ class OcsStates(object):
             self._lock.acquire()
             try:
                 mask = 1 << bit
-                self.flags = (self.flags | mask)
+                self._flags = (self._flags | mask)
             finally:
                 self._lock.release()
 
@@ -164,7 +164,7 @@ class OcsStates(object):
             self._lock.acquire()
             try:
                 mask = ~(1 << bit)
-                self.flags = (self.flags & mask)
+                self._flags = (self._flags & mask)
             finally:
                 self._lock.release()
 
@@ -176,7 +176,7 @@ class OcsStates(object):
             self._lock.acquire()
             try:
                 mask = 1 << bit
-                self.flags = (self.flags ^ mask)
+                self._flags = (self._flags ^ mask)
             finally:
                 self._lock.release()
 
@@ -213,7 +213,7 @@ class OcsStates(object):
 
     @property
     def flags(self):
-        return self.flags
+        return self._flags
 
     @flags.setter
     def flags(self, flags):
@@ -257,7 +257,7 @@ class OcsStates(object):
         v5 = 'configurations={0:s} '.format(str(ocsEntitySummaryStateConfigurations.get(self._current_state, [])))
         v6 = 'busy={0:s} '.format(str(self._busy))
         v7 = 'shutdown={0:s} '.format(str(self._shutdown))
-        v8 = 'flags={0:s} '.format(str(self.flags))
+        v8 = 'flags={0:s} '.format(str(self._flags))
         v9 = 'lock={0:s} '.format(str(self._lock))
         va = 'address={0:s}'.format(str(hex(id(self))))
         return 'OcsStates(): {0:s}'.format(v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9 + va)
@@ -276,37 +276,45 @@ if __name__ == "__main__":
         stalog.info('{0:s}'.format(states.__str__()))
 
         # set some flags
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_ABORT_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_DISABLE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_ENABLE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_ENTERCONTROL_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_EXITCONTROL_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_SETVALUE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_STANDBY_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_START_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_STOP_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_SEQUENCE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_SCRIPT_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
         states.set_flag(OCS_SEQUENCER_SHUTDOWN_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        stalog.info('flags={0:s}'.format(str(states.flags)))
 
         # change state
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))
         states.change_state(OCS_SUMMARY_STATE_OFFLINE, OCS_SUMMARY_STATE_STANDBY)
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))
         states.change_state(OCS_SUMMARY_STATE_STANDBY, OCS_SUMMARY_STATE_DISABLED)
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))
         states.change_state(OCS_SUMMARY_STATE_DISABLED, OCS_SUMMARY_STATE_ENABLED)
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))
         states.change_state(OCS_SUMMARY_STATE_ENABLED, OCS_SUMMARY_STATE_DISABLED)
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))
         states.change_state(OCS_SUMMARY_STATE_DISABLED, OCS_SUMMARY_STATE_STANDBY)
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))
         states.change_state(OCS_SUMMARY_STATE_STANDBY, OCS_SUMMARY_STATE_OFFLINE)
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))
         states.change_state(OCS_SUMMARY_STATE_ENABLED, OCS_SUMMARY_STATE_FAULT)
+        stalog.info('states._current_state={0:s}'.format(str(states.current_state)))

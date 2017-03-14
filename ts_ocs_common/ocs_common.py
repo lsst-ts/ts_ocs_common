@@ -256,10 +256,10 @@ ocsEntitySummaryState = {
     }
 
 ocsEntitySummaryStateCommands = {
-    OCS_SUMMARY_STATE_OFFLINE: ['entercontrol'],
-    OCS_SUMMARY_STATE_STANDBY: ['exitcontrol', 'start'],
+    OCS_SUMMARY_STATE_OFFLINE: ['enterControl'],
+    OCS_SUMMARY_STATE_STANDBY: ['exitControl', 'start'],
     OCS_SUMMARY_STATE_DISABLED: ['enable', 'standby'],
-    OCS_SUMMARY_STATE_ENABLED: ['abort', 'disable', 'setvalue', 'stop'],
+    OCS_SUMMARY_STATE_ENABLED: ['abort', 'disable', 'setValue', 'stop'],
     OCS_SUMMARY_STATE_FAULT: [],
     OCS_SUMMARY_STATE_UNKNOWN: []
     }
