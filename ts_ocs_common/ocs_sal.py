@@ -6,6 +6,67 @@
 # import(s)
 # -
 from OcsExceptions import *
+import argparse
+
+
+# +
+# __doc__ string
+# -
+__doc__ = """
+
+This file, $TS_OCS_COMMON_SRC/ocs_sal.py, contains code for importing and retrieving attributes of
+ts_sal code. It uses argparse to provide a command line interface as demonstrated in
+$TS_OCS_COMMON_BIN/ocs_sal.sh.
+
+Import:
+
+    from ocs_sal import *
+
+API:
+
+    ocs_sal_import(module='')
+        if module='', returns None. If module!='' returns the object = __import(module)__.
+        If the specified module cannot be imported, raises an OcsGenericEntityException
+
+    ocs_sal_attribute(sal_object=None, attribute='')
+        if the input arguments are invalid, returns None. If the inputs are valid, returns the
+        object = getattr(sal_object, attribute). On error, raises an OcsGenericEntityException
+
+CLI:
+
+    python $TS_OCS_COMMON_SRC/ocs_sal.py --help
+    usage: ocs_sal.py [-h] [-m MODULE] [-a ATTRIBUTE]
+
+    optional arguments:
+    -h, --help              show this help message and exit
+    -m MODULE, --module MODULE
+                            input SAL module
+    -a ATTRIBUTE, --attribute ATTRIBUTE
+                            input SAL module attribute
+
+    python $TS_OCS_COMMON_SRC/ts_ocs_common/ocs_sal.py -h
+    usage: ocs_sal.py [-h] [-m MODULE] [-a ATTRIBUTE]
+
+    optional arguments:
+    -h, --help              show this help message and exit
+    -m MODULE, --module MODULE
+                            input SAL module
+    -a ATTRIBUTE, --attribute ATTRIBUTE
+                            input SAL module attribute
+
+    Examples:
+
+    python $TS_OCS_COMMON_SRC/ocs_sal.py --module=SALPY_camera --attribute=SAL_camera
+    Imported module SALPY_camera OK
+    Got attribute SAL_camera OK
+
+    python $TS_OCS_COMMON_SRC/ocs_sal.py -m=SALPY_camera -a=SAL_camera
+    Imported module SALPY_camera OK
+    Got attribute SAL_camera OK
+
+    For further examples, see $TS_OCS_COMMON_BIN/ocs_sal.sh
+
+"""
 
 
 # +
@@ -14,7 +75,6 @@ from OcsExceptions import *
 __author__ = "Philip N. Daly"
 __copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."
 __date__ = "31 October 2016"
-__doc__ = """Functions for manipulating the SAL in the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "ocs_sal.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
@@ -112,4 +172,3 @@ if __name__ == "__main__":
     else:
         print('Insufficient command line arguments specified')
         print('Use: python ' + sys.argv[0] + ' --help for more information')
-

@@ -13,12 +13,93 @@ import sys
 
 
 # +
+# __doc__ string
+# -
+__doc__ = """
+
+This file, $TS_OCS_COMMON_SRC/ocs_id.py, contains code for manipulating (unique) identifiers in the
+OCS. These identifiers are centered around timestamps provided by the astropy.time package. It uses
+argparse to provide a command line interface as demonstrated in $TS_OCS_COMMON_BIN/ocs_id.sh. The
+timestamp should have millisecond accuracy.
+
+Import:
+
+    from ocs_id import *
+
+API:
+
+    ocs_id(date_flag=False)
+        returns an ISO-8660 dates-string if date_flag=True, otherwise returns a MJD string
+
+    ocs_iso_to_mjd(iso_string='')
+        returns the MJD string representation on an input ISO-8660 timestamp (or an empty string)
+
+    ocs_md_to_iso(mjd_string='')
+        returns the ISO-8660 string representaton of an input MJD string (or an empty string)
+
+CLI:
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py --help
+    usage: ocs_id.py [-h] [-c CONVERT] [-a | -d | -i | -m]
+
+    optional arguments:
+        -h, --help            show this help message and exit
+        -c CONVERT, --convert CONVERT
+                              convert CONVERT = { ISO | MJD } string to other format
+        -a, --ascii           return an ISO8660 date string from the current time
+        -d, --digital         return a MJD string from the current time
+        -i, --iso             return an ISO8660 date string from the current time
+        -m, --mjd             return a MJD string from the current time
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py -h
+    usage: ocs_id.py [-h] [-c CONVERT] [-a | -d | -i | -m]
+
+    optional arguments:
+        -h, --help            show this help message and exit
+        -c CONVERT, --convert CONVERT
+                              convert CONVERT = { ISO | MJD } string to other format
+        -a, --ascii           return an ISO8660 date string from the current time
+        -d, --digital         return a MJD string from the current time
+        -i, --iso             return an ISO8660 date string from the current time
+        -m, --mjd             return a MJD string from the current time
+
+    Examples:
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py --iso
+    2017-03-03T20:29:04.199
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py --mjd
+    57815.85353053240396548
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py --convert `python $TS_OCS_COMMON_SRC/ocs_id.py -a`
+    2017-03-03T20:29:05.450 = 57815.85353530092834262
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py --convert `python $TS_OCS_COMMON_SRC/ocs_id.py -d`
+    57815.85354714120330755 = 2017-03-03T20:29:06.473
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py -a
+    2017-03-03T20:29:07.731
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py -d
+    57815.85357112268684432
+
+    python $TS_OCS_COMMON_SRC/ocs_id.py -c `python $TS_OCS_COMMON_SRC/ocs_id.py --ascii`
+    2017-03-03T20:29:09.347 = 57815.85358040509163402
+
+    $TS_OCS_COMMON_SRC/ocs_id.py -c `python $TS_OCS_COMMON_SRC/ocs_id.py --digital`
+    57815.85358993055706378 = 2017-03-03T20:29:10.170
+
+
+    For further examples, see $TS_OCS_COMMON_BIN/ocs_id.sh
+
+"""
+
+# +
 # dunder string(s)
 # -
 __author__ = "Philip N. Daly"
 __copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."
 __date__ = "31 October 2016"
-__doc__ = """Functions for manipulating identifiers in the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "ocs_id.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
@@ -61,7 +142,7 @@ def ocs_mjd_to_iso(mjd_string=''):
         :param mjd_string: input MJD date
         :return: string representation of mjd_string as ISO-8660
     """
-    if not isinstance(mjd_string, str) or mjd_string == "":
+    if not isinstance(mjd_string, str) or mjd_string == '':
         return ''
     else:
         return Time(float(mjd_string) + 2400000.5, format='jd', precision=3).iso.replace(' ', 'T')
@@ -114,4 +195,3 @@ if __name__ == "__main__":
     else:
         print('No command line arguments specified')
         print('Use: python ' + sys.argv[0] + ' --help for more information')
-

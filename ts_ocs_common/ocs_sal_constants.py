@@ -3,12 +3,26 @@
 
 
 # +
+# __doc__ string
+# -
+__doc__ = """
+
+This file, $TS_OCS_COMMON_SRC/ocs_sal_constants.py, contains contains the ts_sal constants in Python
+format. It is generated, automatically, by $TS_OCS_COMMON_BIN/ocs_sal_get_constants.sh which, in turn,
+calls $TS_OCS_COMMON_SRC/ocs_get_sal_constants.py.
+Import:
+
+    from ocs_sal_constants import *
+
+"""
+
+
+# +
 # dunder string(s)
 # -
 __author__ = "Philip N. Daly"
-__copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."
+__copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2017. All rights reserved. Released under the GPL."
 __date__ = "31 October 2016"
-__doc__ = """SAL constatnts for Python in the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "ocs_sal_constants.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
@@ -34,4 +48,3 @@ SAL__CMD_NOACK = -301
 SAL__CMD_FAILED = -302
 SAL__CMD_ABORTED = -303
 SAL__CMD_TIMEOUT = -304
-

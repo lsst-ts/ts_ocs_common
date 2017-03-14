@@ -9,6 +9,12 @@ from ocs_id import *
 
 
 # +
+# __doc__ string
+# _
+__doc__ = """test of ocs_id"""
+
+
+# +
 # function: test_iso_to_mjd()
 # -
 def test_iso_to_mjd():
@@ -54,6 +60,5 @@ def test_accuracy_2():
     x = ocs_id(False)
     y = ocs_mjd_to_iso(x)
     z = ocs_iso_to_mjd(y)
-    conversion_error = float(x) - float(ocs_iso_to_mjd(y))
+    conversion_error = float(x) - float(z)
     assert conversion_error == 0.0
-

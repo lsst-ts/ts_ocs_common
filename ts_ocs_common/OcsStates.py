@@ -5,13 +5,51 @@
 # +
 # import(s)
 # -
-from ocs_common import *
-from ocs_id import *
-from ocs_sal import *
-from OcsExceptions import *
 from OcsLogger import *
-
 import threading
+
+
+# +
+# __doc__ string
+# -
+__doc__ = """
+
+This file, $TS_OCS_COMMON_SRC/OcsStates.py, contains code for handling state machine functionality within OCS
+provided commandable entities. There are no Python (unit) tests (as yet). It uses locking to control safe access
+to state information as it intended to be used in a threading module.
+
+Import:
+
+    from OcsStates import *
+
+Example:
+
+    states = None
+    try:
+        states = OcsStates()
+    except:
+        pass
+    if states:
+        states.change_state(OCS_SUMMARY_STATE_OFFLINE, OCS_SUMMARY_STATE_STANDBY)
+        states.change_state(OCS_SUMMARY_STATE_STANDBY, OCS_SUMMARY_STATE_DISABLED)
+        states.change_state(OCS_SUMMARY_STATE_DISABLED, OCS_SUMMARY_STATE_ENABLED)
+        states.change_state(OCS_SUMMARY_STATE_ENABLED, OCS_SUMMARY_STATE_DISABLED)
+        states.change_state(OCS_SUMMARY_STATE_DISABLED, OCS_SUMMARY_STATE_STANDBY)
+        states.change_state(OCS_SUMMARY_STATE_STANDBY, OCS_SUMMARY_STATE_OFFLINE)
+        states.change_state(OCS_SUMMARY_STATE_ENABLED, OCS_SUMMARY_STATE_FAULT)
+
+API:
+
+    OcsStates()
+        this class provides the method change_state(from_state=0, to_state=0) which changes state from one
+        to another. If either state is invalid, the object enters the UNKNOWN state. Constants are provided
+        for each summary state known to the OCS.
+
+CLI:
+
+    None
+
+"""
 
 # +
 # dunder string(s)
@@ -19,7 +57,6 @@ import threading
 __author__ = "Philip N. Daly"
 __copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2017. All rights reserved. Released under the GPL."
 __date__ = "13 February 2017"
-__doc__ = """States class for the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "OcsStates.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
@@ -45,9 +82,10 @@ class OcsStates(object):
         self._commands = ocsEntitySummaryStateCommands.get(self._current_state, [])
         self._configurations = ocsEntitySummaryStateConfigurations.get(self._current_state, [])
         self._busy = False
-        self._flags = 0
         self._lock = threading.Lock()
         self._shutdown = False
+
+        self.flags = 0
 
         # set up logging
         self.logger = OcsLogger('States', 'ocs').logger
@@ -57,8 +95,10 @@ class OcsStates(object):
     # method: change_state()
     # -
     def change_state(self, from_state=0, to_state=0):
-        self.logger.debug("Entering change_state(from_state={0:s}, to_state={1:s})".format(str(from_state), str(to_state)))
-        self.logger.debug("\t changing state from {0:s} to {1:s}".format(ocsEntitySummaryState.get(from_state,'').upper(), ocsEntitySummaryState.get(to_state,'').upper()))
+        self.logger.debug("Entering change_state(from_state={0:s}, to_state={1:s})".format(str(from_state),
+                                                                                           str(to_state)))
+        self.logger.debug("\t changing state from {0:s} to {1:s}".format(
+            ocsEntitySummaryState.get(from_state, '').upper(), ocsEntitySummaryState.get(to_state, '').upper()))
 
         # check input(s)
         if not isinstance(from_state, int):
@@ -85,56 +125,58 @@ class OcsStates(object):
             self._lock.release()
 
         # output some messages
-        self.logger.debug('\t self._previous_state={0:s}'.format(ocsEntitySummaryState.get(self._previous_state,'')))
-        self.logger.debug('\t self._current_state={0:s}'.format(ocsEntitySummaryState.get(self._current_state,'')))
+        self.logger.debug('\t self._previous_state={0:s}'.format(ocsEntitySummaryState.get(self._previous_state, '')))
+        self.logger.debug('\t self._current_state={0:s}'.format(ocsEntitySummaryState.get(self._current_state, '')))
         self.logger.debug('\t self._commands={0:s}'.format(str(self._commands)))
         self.logger.debug('\t self._configurations={0:s}'.format(str(self._configurations)))
-        self.logger.debug("\t changed state from {0:s} to {1:s}".format(ocsEntitySummaryState.get(from_state,'').upper(), ocsEntitySummaryState.get(to_state,'').upper()))
-        self.logger.debug("Exiting change_state(from_state={0:s}, to_state={1:s})".format(str(from_state), str(to_state)))
+        self.logger.debug("\t changed state from {0:s} to {1:s}".format(
+            ocsEntitySummaryState.get(from_state, '').upper(), ocsEntitySummaryState.get(to_state, '').upper()))
+        self.logger.debug("Exiting change_state(from_state={0:s}, to_state={1:s})".format(str(from_state),
+                                                                                          str(to_state)))
             
     # +
-    # method: testFlag()
+    # method: test_flag()
     # -
-    def testFlag(self, bit=0):
-        if isinstance(bit, int) and bit>=0:
-            if (self._flags & (1 << bit)) > 0:
+    def test_flag(self, bit=0):
+        if isinstance(bit, int) and bit >= 0:
+            if (self.flags & (1 << bit)) > 0:
                 return True
             else:
                 return False
 
     # +
-    # method: setFlag()
+    # method: set_flag()
     # -
-    def setFlag(self, bit=0):
-        if isinstance(bit, int) and bit>=0:
+    def set_flag(self, bit=0):
+        if isinstance(bit, int) and bit >= 0:
             self._lock.acquire()
             try:
                 mask = 1 << bit
-                self._flags = (self._flags | mask)
+                self.flags = (self.flags | mask)
             finally:
                 self._lock.release()
 
     # +
-    # method: clearFlag()
+    # method: clear_flag()
     # -
-    def clearFlag(self, bit=0):
-        if isinstance(bit, int) and bit>=0:
+    def clear_flag(self, bit=0):
+        if isinstance(bit, int) and bit >= 0:
             self._lock.acquire()
             try:
                 mask = ~(1 << bit)
-                self._flags = (self._flags & mask)
+                self.flags = (self.flags & mask)
             finally:
                 self._lock.release()
 
     # +
-    # method: toggleFlag()
+    # method: toggle_flag()
     # -
-    def toggleFlag(self, bit=0):
-        if isinstance(bit, int) and bit>=0:
+    def toggle_flag(self, bit=0):
+        if isinstance(bit, int) and bit >= 0:
             self._lock.acquire()
             try:
                 mask = 1 << bit
-                self._flags = (self._flags ^ mask)
+                self.flags = (self.flags ^ mask)
             finally:
                 self._lock.release()
 
@@ -171,7 +213,7 @@ class OcsStates(object):
 
     @property
     def flags(self):
-        return self._flags
+        return self.flags
 
     @flags.setter
     def flags(self, flags):
@@ -215,10 +257,10 @@ class OcsStates(object):
         v5 = 'configurations={0:s} '.format(str(ocsEntitySummaryStateConfigurations.get(self._current_state, [])))
         v6 = 'busy={0:s} '.format(str(self._busy))
         v7 = 'shutdown={0:s} '.format(str(self._shutdown))
-        v8 = 'flags={0:s} '.format(str(self._flags))
+        v8 = 'flags={0:s} '.format(str(self.flags))
         v9 = 'lock={0:s} '.format(str(self._lock))
         va = 'address={0:s}'.format(str(hex(id(self))))
-        return 'OcsStates(): {0:s}'.format(v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9 +va)
+        return 'OcsStates(): {0:s}'.format(v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9 + va)
 
 # +
 # main()
@@ -234,31 +276,31 @@ if __name__ == "__main__":
         stalog.info('{0:s}'.format(states.__str__()))
 
         # set some flags
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_ABORT_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_DISABLE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_ENABLE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_ENTERCONTROL_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_EXITCONTROL_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_SETVALUE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_STANDBY_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_START_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_STOP_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_SEQUENCE_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_SCRIPT_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
-        states.setFlag(OCS_SEQUENCER_SHUTDOWN_OFFSET)
-        stalog.info('states._flags={0:s}'.format(str(states._flags)))
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_ABORT_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_DISABLE_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_ENABLE_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_ENTERCONTROL_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_EXITCONTROL_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_SETVALUE_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_STANDBY_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_START_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_STOP_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_SEQUENCE_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_SCRIPT_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
+        states.set_flag(OCS_SEQUENCER_SHUTDOWN_OFFSET)
+        stalog.info('states._flags={0:s}'.format(str(states.flags)))
 
         # change state
         states.change_state(OCS_SUMMARY_STATE_OFFLINE, OCS_SUMMARY_STATE_STANDBY)
@@ -268,4 +310,3 @@ if __name__ == "__main__":
         states.change_state(OCS_SUMMARY_STATE_DISABLED, OCS_SUMMARY_STATE_STANDBY)
         states.change_state(OCS_SUMMARY_STATE_STANDBY, OCS_SUMMARY_STATE_OFFLINE)
         states.change_state(OCS_SUMMARY_STATE_ENABLED, OCS_SUMMARY_STATE_FAULT)
-

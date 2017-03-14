@@ -14,7 +14,23 @@ from __future__ import print_function
 import os
 import random
 import sys
-from ocs_sal_constants import *
+
+
+# +
+# __doc__ string
+# -
+__doc__ = """
+
+This file, $TS_OCS_COMMON_SRC/ocs_common.py, contains common declarations for the OCS components.
+It provides constants, error codes, dictionaries, state machine structures, (output) formats,
+(regular expression) patterns and variables utilized in other code within the ts_ocs_<component>
+hierarchy.
+
+Import:
+
+    from ocs_common import *
+
+"""
 
 
 # +
@@ -23,7 +39,6 @@ from ocs_sal_constants import *
 __author__ = "Philip N. Daly"
 __copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."
 __date__ = "31 October 2016"
-__doc__ = """Declarations for common values in the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "ocs_common.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
@@ -33,24 +48,25 @@ __version__ = "0.1.0"
 # +
 # constant(s)
 # -
-OCS_CAMERA_COMMAND_TIMEOUT        = 5
+OCS_CAMERA_COMMAND_TIMEOUT = 5
 OCS_CAMERA_FILTER_COMMAND_TIMEOUT = 65
-OCS_CAMERA_IMAGE_COMMAND_TIMEOUT  = 40
-OCS_GENERIC_COMMAND_TIMEOUT       = 10
-OCS_SEQUENCER_COMMAND_TIMEOUT     = 10
+OCS_CAMERA_IMAGE_COMMAND_TIMEOUT = 40
+OCS_GENERIC_COMMAND_TIMEOUT = 10
+OCS_SEQUENCER_COMMAND_TIMEOUT = 10
 
-OCS_SEQUENCER_ABORT_OFFSET        = 1
-OCS_SEQUENCER_DISABLE_OFFSET      = 2
-OCS_SEQUENCER_ENABLE_OFFSET       = 3
+OCS_SEQUENCER_ABORT_OFFSET = 1
+OCS_SEQUENCER_DISABLE_OFFSET = 2
+OCS_SEQUENCER_ENABLE_OFFSET = 3
 OCS_SEQUENCER_ENTERCONTROL_OFFSET = 4
-OCS_SEQUENCER_EXITCONTROL_OFFSET  = 5
-OCS_SEQUENCER_SETVALUE_OFFSET     = 6
-OCS_SEQUENCER_STANDBY_OFFSET      = 7
-OCS_SEQUENCER_START_OFFSET        = 8
-OCS_SEQUENCER_STOP_OFFSET         = 9
-OCS_SEQUENCER_SEQUENCE_OFFSET     = 10
-OCS_SEQUENCER_SCRIPT_OFFSET       = 11
-OCS_SEQUENCER_SHUTDOWN_OFFSET     = 12
+OCS_SEQUENCER_EXITCONTROL_OFFSET = 5
+OCS_SEQUENCER_SETVALUE_OFFSET = 6
+OCS_SEQUENCER_STANDBY_OFFSET = 7
+OCS_SEQUENCER_START_OFFSET = 8
+OCS_SEQUENCER_STOP_OFFSET = 9
+OCS_SEQUENCER_SEQUENCE_OFFSET = 10
+OCS_SEQUENCER_SCRIPT_OFFSET = 11
+OCS_SEQUENCER_SHUTDOWN_OFFSET = 12
+
 
 # +
 # error code(s)
@@ -68,13 +84,16 @@ OCS_CAMERA_ENTITY_ERROR_NOWFS = -1009
 OCS_CAMERA_ENTITY_ERROR_NONAM = -1010
 OCS_CAMERA_ENTITY_ERROR_NOMOD = -1011
 OCS_CAMERA_ENTITY_ERROR_NOCLS = -1012
+OCS_CAMERA_ENTITY_ERROR_NOCLR = -1013
+OCS_CAMERA_ENTITY_ERROR_NOROW = -1014
 
 OCS_EVENTS_ERROR_NOSIM = -2000
 OCS_EVENTS_ERROR_NOVAL = -2001
 OCS_EVENTS_ERROR_NOERR = -2002
 
 OCS_GENERAL_ERROR_NOFIL = -3000
-OCS_GENERAL_ERROR_NOERR = -3001
+OCS_GENERAL_ERROR_NOPAR = -3001
+OCS_GENERAL_ERROR_NOERR = -3002
 
 OCS_GENERIC_ENTITY_BACKGROUND_COLOUR = '#f0f8ff'
 
@@ -94,10 +113,14 @@ OCS_GENERIC_ENTITY_ERROR_NOOPS = -4012
 OCS_GENERIC_ENTITY_ERROR_NOTIM = -4013
 OCS_GENERIC_ENTITY_ERROR_NOERR = -4014
 
-OCS_XML_ERROR_NOXSD = -5000
-OCS_XML_ERROR_NOXML = -5001
-OCS_XML_ERROR_NOPRS = -5002
-OCS_XML_ERROR_NOERR = -5003
+OCS_SEQUENCER_ENTITY_ERROR_NOSEQ = -5000
+OCS_SEQUENCER_ENTITY_ERROR_NOSCR = -5001
+
+OCS_XML_ERROR_NOXSD = -6000
+OCS_XML_ERROR_NOXML = -6001
+OCS_XML_ERROR_NOPRS = -6002
+OCS_XML_ERROR_NOERR = -6003
+
 
 # +
 # dictionaries
@@ -115,8 +138,10 @@ ocsCameraEntityErrorDictionary = {
     OCS_CAMERA_ENTITY_ERROR_NOWFS: "No valid wfs area defined",
     OCS_CAMERA_ENTITY_ERROR_NONAM: "No valid sequence name defined",
     OCS_CAMERA_ENTITY_ERROR_NOMOD: "No valid module of that name",
-    OCS_CAMERA_ENTITY_ERROR_NOCLS: "No valid class of that name"
-    }
+    OCS_CAMERA_ENTITY_ERROR_NOCLS: "No valid class of that name",
+    OCS_CAMERA_ENTITY_ERROR_NOCLR: "No valid number of clears defined",
+    OCS_CAMERA_ENTITY_ERROR_NOROW: "No valid number of rows defined"
+}
 
 ocsEventsErrorDictionary = {
     OCS_EVENTS_ERROR_NOSIM: "No simulation flag defined",
@@ -126,6 +151,7 @@ ocsEventsErrorDictionary = {
 
 ocsGeneralErrorDictionary = {
     OCS_GENERAL_ERROR_NOFIL: "No valid file",
+    OCS_GENERAL_ERROR_NOPAR: "No parameter change allowed",
     OCS_GENERAL_ERROR_NOERR: "No valid error"
     }
 
@@ -147,6 +173,10 @@ ocsGenericEntityErrorDictionary = {
     OCS_GENERIC_ENTITY_ERROR_NOERR: "No valid generic error code defined"
     }
 
+ocsSequencerEntityErrorDictionary = {
+    OCS_SEQUENCER_ENTITY_ERROR_NOSEQ: "No valid sequence defined",
+    OCS_SEQUENCER_ENTITY_ERROR_NOSCR: "No valid script defined"
+}
 
 ocsGenericEntityLogicDictionary = {
     "active": True,
@@ -187,7 +217,7 @@ ocsGenericEntityEntityDictionary = {
     "CCS": ['Camera'],
     "DMCS": ['Dm', 'Archiver', 'CatchupArchiver', 'ProcessingCluster'],
     "EMCS": ['VisibleAllSkyCamera', 'InfraRedAllSkyCamera', 'DifferentialImageMotionMonitor'],
-    "OCS": ['ocs'],
+    "OCS": ['ocs', 'Sequencer'],
     "SFCS": ['AirConditioning', 'PowerConditioning'],
     "TCS": ['Mount', 'Enclosure'],
     "TEST": ['Test']
@@ -205,15 +235,16 @@ ocsGenericEntityBackgroundColour = {
     'TEST': OCS_GENERIC_ENTITY_BACKGROUND_COLOUR
     }
 
+
 # +
 # state machine crap
 # -
-OCS_SUMMARY_STATE_OFFLINE  = 0x1000
-OCS_SUMMARY_STATE_STANDBY  = 0x1001
+OCS_SUMMARY_STATE_OFFLINE = 0x1000
+OCS_SUMMARY_STATE_STANDBY = 0x1001
 OCS_SUMMARY_STATE_DISABLED = 0x1002
-OCS_SUMMARY_STATE_ENABLED  = 0x1003
-OCS_SUMMARY_STATE_FAULT    = 0x1004
-OCS_SUMMARY_STATE_UNKNOWN  = 0x1005
+OCS_SUMMARY_STATE_ENABLED = 0x1003
+OCS_SUMMARY_STATE_FAULT = 0x1004
+OCS_SUMMARY_STATE_UNKNOWN = 0x1005
 
 ocsEntitySummaryState = {
     OCS_SUMMARY_STATE_OFFLINE: 'offline',
@@ -225,30 +256,33 @@ ocsEntitySummaryState = {
     }
 
 ocsEntitySummaryStateCommands = {
-    OCS_SUMMARY_STATE_OFFLINE: [ 'entercontrol' ],
-    OCS_SUMMARY_STATE_STANDBY: [ 'exitcontrol', 'start' ],
-    OCS_SUMMARY_STATE_DISABLED: [ 'enable', 'standby' ],
-    OCS_SUMMARY_STATE_ENABLED: [ 'abort', 'disable', 'setvalue', 'stop' ],
+    OCS_SUMMARY_STATE_OFFLINE: ['entercontrol'],
+    OCS_SUMMARY_STATE_STANDBY: ['exitcontrol', 'start'],
+    OCS_SUMMARY_STATE_DISABLED: ['enable', 'standby'],
+    OCS_SUMMARY_STATE_ENABLED: ['abort', 'disable', 'setvalue', 'stop'],
     OCS_SUMMARY_STATE_FAULT: [],
     OCS_SUMMARY_STATE_UNKNOWN: []
     }
 
 ocsEntitySummaryStateConfigurations = {
     OCS_SUMMARY_STATE_OFFLINE: [],
-    OCS_SUMMARY_STATE_STANDBY: [ 'Normal' ],
+    OCS_SUMMARY_STATE_STANDBY: ['Normal'],
     OCS_SUMMARY_STATE_DISABLED: [],
     OCS_SUMMARY_STATE_ENABLED: [],
     OCS_SUMMARY_STATE_FAULT: [],
     OCS_SUMMARY_STATE_UNKNOWN: []
     }
 
+
 # +
 # format(s)
 # -
 OCS_LOGGER_DIR = '/tmp'
 OCS_LOGGER_FILE = 'ocs.log'
-OCS_LOGGER_FILE_FORMAT = '%(asctime)-20s %(levelname)-9s %(name)-15s %(filename)-15s %(funcName)-15s line:%(lineno)-5d PID:%(process)-6d Message: %(message)s'
-OCS_LOGGER_CONSOLE_FORMAT = '%(asctime)-20s %(levelname)-9s %(filename)-15s %(funcName)-15s line:%(lineno)-5d Message: %(message)s'
+OCS_LOGGER_FILE_FORMAT = '%(asctime)-20s %(levelname)-9s %(name)-15s %(filename)-15s %(funcName)-15s ' \
+                         'line:%(lineno)-5d PID:%(process)-6d Message: %(message)s'
+OCS_LOGGER_CONSOLE_FORMAT = '%(asctime)-20s %(levelname)-9s %(filename)-15s %(funcName)-15s line:%(lineno)-5d ' \
+                            'Message: %(message)s'
 
 
 # +
@@ -263,4 +297,3 @@ MJD_PATTERN = '^[0-9]{5}\.[0-9]{17}'
 # -
 pyvers = 'Python v' + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + '.' + str(sys.version_info[2])
 rseed = random.seed(os.getpid())
-

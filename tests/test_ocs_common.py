@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 # +
-# import(s)
-# -
-from ocs_common import *
+# __doc__ string
+# _
+__doc__ = """test of ocs_common"""
+
 
 # +
 # function: test_ocs_common() to keep py.test happy

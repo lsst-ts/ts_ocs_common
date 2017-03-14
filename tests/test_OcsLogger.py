@@ -5,15 +5,22 @@
 # +
 # import(s)
 # -
+from OcsExceptions import *
 from OcsLogger import *
+
+
+# +
+# __doc__ string
+# _
+__doc__ = """test of OcsLogger"""
 
 
 # +
 # function: test_logger()
 # -
 def test_logger():
-    log = OcsLogger()
-    if log:
+    my_log = OcsLogger()
+    if my_log:
         assert True
     else:
         assert False
@@ -23,13 +30,13 @@ def test_logger():
 # function: test_change_name()
 # -
 def test_change_name():
-    log = OcsLogger()
-    if not log:
+    my_log = OcsLogger()
+    if not my_log:
         assert False
     else:
         try:
-            log.name = 'JUNK'
-        except:
+            my_log._name = 'JUNK'
+        except OcsGeneralException:
             assert True
 
 
@@ -37,13 +44,11 @@ def test_change_name():
 # function: test_change_subname()
 # -
 def test_change_subname():
-    log = OcsLogger()
-    if not log:
+    my_log = OcsLogger()
+    if not my_log:
         assert False
     else:
         try:
-            log.subname = 'Junk'
-        except:
+            my_log._subname = 'Junk'
+        except OcsGeneralException:
             assert True
-
-

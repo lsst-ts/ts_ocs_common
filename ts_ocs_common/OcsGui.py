@@ -5,13 +5,58 @@
 # +
 # import(s)
 # -
-from OcsExceptions import *
-from OcsLogger import *
-import os
-import sys
 from ocs_id import *
+# noinspection PyCompatibility,PyCompatibility
 from Tkinter import *
+# noinspection PyCompatibility
 from tkMessageBox import *
+
+
+# +
+# __doc__ string
+# -
+__doc__ = """
+
+This file, $TS_OCS_COMMON_SRC/OcsGui.py, contains code for common operations within a TkInter OCS GUI.
+Note that this code is temporary as these interfaces will be replaced by web-based interfaces in due course,
+It uses argparse to provide a command line interface. There are no Python (unit) tests.
+
+Import:
+
+    from OcsGui import *
+
+Example:
+
+    evh = None
+    try:
+        root = Tk()
+        evh = OcsEntryDialog(root, 'Test', ['Input Line 1'])
+    except:
+        pass
+
+API:
+
+    OcsEntryDialog(OcsDialog)
+        this class provides support for a pop-up window with a variable number of input lines and a pair of operation
+        buttons (Ok, Cancel). If 'Ok' is selected, a dictionary of values can be returned to higher level code.
+
+    OcsQuitButton(Frame)
+        this class contains the single method 'quit' which produces a Quit button with a verification dialog widget
+
+CLI:
+
+    [pnd@localhost ts_ocs_common]$ python OcsGui.py --help
+    usage: OcsGui.py [-h] [-1 | -2 | -3 | -4 | -q]
+
+    optional arguments:
+      -h, --help    show this help message and exit
+      -1, --single  Test the single entry widget
+      -2, --double  Test the double entry widget
+      -3, --triple  Test the triple entry widget
+      -4, --quad    Test the quad entry widget
+      -q, --quit    Test the quit widget
+
+"""
 
 
 # +
@@ -20,7 +65,6 @@ from tkMessageBox import *
 __author__ = "Philip N. Daly"
 __copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2017. All rights reserved. Released under the GPL."
 __date__ = "15 January 2017"
-__doc__ = """Common TkInter code for the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "OcsGui.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
@@ -29,12 +73,12 @@ __version__ = "0.1.0"
 
 # +
 # class: OcsQuitButton() inherits from Frame class
-#-
+# -
 class OcsQuitButton(Frame):
 
-    #+
+    # +
     # method: __init__
-    #-
+    # -
     def __init__(self, parent=None):
         if parent:
             Frame.__init__(self, parent)
@@ -43,27 +87,31 @@ class OcsQuitButton(Frame):
             widget.config(foreground='black', background='wheat', font=('helvetica', 12, 'bold italic'))
             widget.pack(side=LEFT, expand=YES, fill=BOTH)
 
-    #+
+    # +
     # method: quit()
-    #-
+    # -
     def quit(self):
         if askokcancel('Verify Quit', 'Do you really want to quit this application?'):
             Frame.quit(self)
 
 
-#+
+# +
 # class: OcsDialog() inherits from Toplevel class
-#-
+# -
 class OcsDialog(Toplevel):
 
-    #+
+    # +
     # method: __init__
-    #-
-    def __init__(self, parent=None, title='', slist=[]):
+    # -
+    def __init__(self, parent=None, title='', slist=None):
 
         # get input(s)
         self.parent = parent
-        self.slist = slist
+        self.slist = list(slist)
+        self.elist = None
+
+        # declare some variables and initialize them
+        self._event = None
 
         # initialize the superclass
         self.top = Toplevel.__init__(self, self.parent)
@@ -73,8 +121,8 @@ class OcsDialog(Toplevel):
         # create frame and buttons
         bd = Frame(self)
         bd.pack(padx=5, pady=5, expand=YES, fill=BOTH)
-        self.initial_focus = self.body(bd,slist)
-        self.createButtons()
+        self.initial_focus = self.body(bd, self.slist)
+        self.create_buttons()
 
         # do something
         self.grab_set()
@@ -85,83 +133,85 @@ class OcsDialog(Toplevel):
         self.focus_set()
         self.wait_window(self)
 
-    #+
+    # +
     # method: createButtons()
-    #-
-    def createButtons(self):
+    # -
+    def create_buttons(self):
 
         # create buttons
-        self.container = Frame(self)
+        container = Frame(self)
 
-        self.ok_button = Button(self.container, text='OK', width=10, command=self.ok, default=ACTIVE)
-        self.ok_button.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
-        self.ok_button.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
-        self.ok_button.bind('<Return>', self.ok)
-        self.ok_button.bind('<Button-1>', self.ok)
-        self.ok_button.bind('<Button-3>', self.cancel)
-        self.ok_button.bind('<Escape>', self.cancel)
+        ok_button = Button(container, text='OK', width=10, command=self.ok, default=ACTIVE)
+        ok_button.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
+        ok_button.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
+        ok_button.bind('<Return>', self.ok)
+        ok_button.bind('<Button-1>', self.ok)
+        ok_button.bind('<Button-3>', self.cancel)
+        ok_button.bind('<Escape>', self.cancel)
 
-        self.cancel_button = Button(self.container, text='Cancel', width=10, command=self.cancel)
-        self.cancel_button.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
-        self.cancel_button.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
-        self.cancel_button.bind('<Return>', self.cancel)
-        self.cancel_button.bind('<Button-1>', self.cancel)
-        self.cancel_button.bind('<Button-3>', self.cancel)
-        self.cancel_button.bind('<Escape>', self.cancel)
+        cancel_button = Button(container, text='Cancel', width=10, command=self.cancel)
+        cancel_button.pack(side=LEFT, padx=5, pady=5, expand=YES, fill=BOTH)
+        cancel_button.config(foreground='black', background='wheat', font=('helvetica', 10, 'bold italic'))
+        cancel_button.bind('<Return>', self.cancel)
+        cancel_button.bind('<Button-1>', self.cancel)
+        cancel_button.bind('<Button-3>', self.cancel)
+        cancel_button.bind('<Escape>', self.cancel)
 
-        self.container.pack()
+        container.pack()
 
-    #+
+    # +
     # method: ok()
-    #-
+    # -
     def ok(self, event=None):
+        self._event = event
         self.withdraw()
         self.update_idletasks()
         self.validate(True)
         self.parent.focus_set()
         self.destroy()
 
-    #+
+    # +
     # method: cancel()
-    #-
+    # -
     def cancel(self, event=None):
+        self._event = event
         self.withdraw()
         self.update_idletasks()
         self.validate(False)
         self.parent.focus_set()
         self.destroy()
 
-    #+
+    # +
     # (override) method: body()
-    #-
-    def body(self, parent=None, slist=[]):
+    # -
+    def body(self, parent=None, slist=None):
         pass
 
-    #+
+    # +
     # (override) method: validate()
-    #-
+    # -
     def validate(self, okb=False):
         pass
 
 
-#+
+# +
 # class: OcsEntryDialog() inherits from the OcsDialog class
-#-
+# -
 class OcsEntryDialog(OcsDialog):
 
     # +
     # (overridden) method: body()
     # -
-    def body(self, parent=None, slist=[]):
-        self.slist = slist
+    def body(self, parent=None, slist=None):
+        self.slist = list(slist)
         self.elist = []
 
         if not self.slist:
             return None
 
-        for E in self.slist:
-            idx = self.slist.index(E)
-            Label(parent, text=E).grid(row=idx, column=0)
+        for El in self.slist:
+            idx = self.slist.index(El)
+            Label(parent, text=El).grid(row=idx, column=0)
             iex = Entry(parent)
             iex.grid(row=idx, column=1)
             self.elist.append(iex)
@@ -171,9 +221,8 @@ class OcsEntryDialog(OcsDialog):
     # (overridden) method: validate()
     # -
     def validate(self, okb=False):
-        self.okb = okb
 
-        if self.okb:
+        if okb:
             self.parent.result = {}
             for k in self.slist:
                 idx = self.slist.index(k)
@@ -238,4 +287,3 @@ if __name__ == '__main__':
     else:
         print('No command line arguments specified')
         print('Use: python ' + sys.argv[0] + ' --help for more information')
-

@@ -10,31 +10,41 @@ from ocs_id import *
 
 
 # +
+# __doc__ string
+# _
+__doc__ = """test of OcsEvents"""
+
+
+# +
 # function: test_instantiate()
 # -
 def test_instantiate():
-    evh = None
     try:
-        evh = OcsEvents(False)
-    except OcsEcentsException as a:
+        ev = OcsEvents(False)
+    except OcsEventsException as a:
         print(a.errstr)
         assert False
-    if evh is not None:
+    if ev is not None:
         assert True
+
 
 # +
 # function: test_send_event()
 # -
 def test_send_event():
-    evh = None
     try:
-        evh = OcsEvents(False)
-    except OcsEcentsException as a:
+        ev = OcsEvents(False)
+    except OcsEventsException as a:
         print(a.errstr)
         assert False
 
-    if evh is not None:
-        ocsid = ocs_id(False)
-        evh.sendEvent('ocsEntityStartup', Name='Test', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
+    if ev is not None:
+        ocsid2 = ocs_id(False)
+        ev.send_event(
+            'ocsEntityStartup',
+            Name='Test',
+            Identifier=float(ocsid2),
+            Timestamp=ocs_mjd_to_iso(ocsid2),
+            Address=id(ev),
+            priority=SAL__EVENT_INFO)
         assert True
-

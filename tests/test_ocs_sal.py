@@ -7,6 +7,11 @@
 # -
 from ocs_sal import *
 
+# +
+# __doc__ string
+# _
+__doc__ = """test of ocs_sal"""
+
 
 # +
 # function: test_sal_import()
@@ -78,4 +83,3 @@ def test_sal_noattribute():
         assert True
     else:
         assert False
-

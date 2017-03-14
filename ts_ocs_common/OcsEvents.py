@@ -5,11 +5,46 @@
 # +
 # import(s)
 # -
-from ocs_common import *
+from ocs_sal_constants import *
 from ocs_id import *
 from ocs_sal import *
 from OcsExceptions import *
 from OcsLogger import *
+import time
+
+
+# +
+# __doc__ string
+# -
+__doc__ = """
+
+This file, $TS_OCS_COMMON_SRC/OcsEvents.py, contains code for handling known OCS events.
+Python (unit) tests are provided in $TS_OCS_COMMON_TESTS/test_OcsEvents.py or all can be
+run from $TS_OCS_COMMON_BIN/test_ocs_common.sh
+
+Import:
+
+    from OcsEvents import *
+
+Example:
+
+    evh = None
+    try:
+        evh = OcsEvents(False)
+    except OcsEventsException as e:
+        print(e.errstr)
+
+API:
+
+    send_event(self, event='', **kwargs)
+        sends the event specified populated by the payload within kwargs. If no ecent is specified, an
+        OcsEventsException is raised,
+
+CLI:
+
+    None
+
+"""
 
 
 # +
@@ -18,7 +53,6 @@ from OcsLogger import *
 __author__ = "Philip N. Daly"
 __copyright__ = u"\N{COPYRIGHT SIGN} AURA/LSST 2016. All rights reserved. Released under the GPL."
 __date__ = "31 December 2016"
-__doc__ = """Events class for the OCS"""
 __email__ = "pdaly@lsst.org"
 __file__ = "OcsEvents.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
@@ -53,10 +87,10 @@ class OcsEvents(object):
         self.logger.debug("Starting {0:s} {1:s}".format(self._system, self._component))
 
         # declare some variables and initialize them
-        self.__archiver = None
-        self.__catchuparchiver = None
-        self.__processingcluster = None
-        self.__ocs = None
+        self.__sal_archiver = None
+        self.__sal_catchuparchiver = None
+        self.__sal_processingcluster = None
+        self.__sal_ocs = None
 
         self.__mgr_archiver = None
         self.__mgr_catchuparchiver = None
@@ -64,12 +98,12 @@ class OcsEvents(object):
         self.__mgr_ocs = None
 
         self.__address = None
-        self.__commands = None
         self.__command_source = None
         self.__command_sent = None
         self.__commands = None
         self.__configurations = None
         self.__current_state = None
+        self.__event = None
         self.__executing = None
         self.__method = None
         self.__identifier = None
@@ -105,54 +139,54 @@ class OcsEvents(object):
 
         # event methods
         self.__event_methods = {
-            'archiverEntitySummaryState': self._archiverEntitySummaryState,
-            'catchuparchiverEntitySummaryState': self._catchuparchiverEntitySummaryState,
-            'processingclusterEntitySummaryState': self._processingclusterEntitySummaryState,
-            'ocsEntitySummaryState': self._ocsEntitySummaryState,
-            'archiverEntityStartup': self._archiverEntityStartup,
-            'catchuparchiverEntityStartup': self._catchuparchiverEntityStartup,
-            'processingclusterEntityStartup': self._processingclusterEntityStartup,
-            'ocsEntityStartup': self._ocsEntityStartup,
-            'archiverEntityShutdown': self._archiverEntityShutdown,
-            'catchuparchiverEntityShutdown': self._catchuparchiverEntityShutdown,
-            'processingclusterEntityShutdown': self._processingclusterEntityShutdown,
-            'ocsEntityShutdown': self._ocsEntityShutdown,
-            'ocsCommandIssued': self._ocsCommandIssued,
-            'ocsCommandStatus': self._ocsCommandStatus
+            'archiverEntitySummaryState': self._archiver_entity_summary_state,
+            'catchuparchiverEntitySummaryState': self._catchuparchiver_entity_summary_state,
+            'processingclusterEntitySummaryState': self._processingcluster_entity_summary_state,
+            'ocsEntitySummaryState': self._ocs_entity_summary_state,
+            'archiverEntityStartup': self._archiver_entity_startup,
+            'catchuparchiverEntityStartup': self._catchuparchiver_entity_startup,
+            'processingclusterEntityStartup': self._processingcluster_entity_startup,
+            'ocsEntityStartup': self._ocs_entity_startup,
+            'archiverEntityShutdown': self._archiver_entity_shutdown,
+            'catchuparchiverEntityShutdown': self._catchuparchiver_entity_shutdown,
+            'processingclusterEntityShutdown': self._processingcluster_entity_shutdown,
+            'ocsEntityShutdown': self._ocs_entity_shutdown,
+            'ocsCommandIssued': self._ocs_command_issued,
+            'ocsCommandStatus': self._ocs_command_status
             }
 
         # import the SAL_archiver (cf. from SALPY_archiver import *)
         mname = 'SALPY_archiver'
         self.logger.debug("Importing {0:s}".format(mname))
-        self.__archiver = ocs_sal_import(mname)
-        if self.__archiver:
+        self.__sal_archiver = ocs_sal_import(mname)
+        if self.__sal_archiver:
             self.logger.debug("Imported {0:s} ok".format(mname))
 
         # import the SAL_catchuparchiver (cf. from SALPY_catchuparchiver import *)
         mname = 'SALPY_catchuparchiver'
         self.logger.debug("Importing {0:s}".format(mname))
-        self.__catchuparchiver = ocs_sal_import(mname)
-        if self.__catchuparchiver:
+        self.__sal_catchuparchiver = ocs_sal_import(mname)
+        if self.__sal_catchuparchiver:
             self.logger.debug("Imported {0:s} ok".format(mname))
 
         # import the SAL_processingcluster (cf. from SALPY_processingcluster import *)
         mname = 'SALPY_processingcluster'
         self.logger.debug("Importing {0:s}".format(mname))
-        self.__processingcluster = ocs_sal_import(mname)
-        if self.__processingcluster:
+        self.__sal_processingcluster = ocs_sal_import(mname)
+        if self.__sal_processingcluster:
             self.logger.debug("Imported {0:s} ok".format(mname))
 
         # import the SAL_ocs (cf. from SALPY_ocs import *)
         mname = 'SALPY_ocs'
         self.logger.debug("Importing {0:s}".format(mname))
-        self.__ocs = ocs_sal_import(mname)
-        if self.__ocs:
+        self.__sal_ocs = ocs_sal_import(mname)
+        if self.__sal_ocs:
             self.logger.debug("Imported {0:s} ok".format(mname))
 
         # get mgr object (cf. mgr = SAL_archiver())
         aname = 'SAL_archiver'
         self.logger.debug("Getting attribute {0:s}".format(aname))
-        mgr = ocs_sal_attribute(self.__archiver, aname)
+        mgr = ocs_sal_attribute(self.__sal_archiver, aname)
         if mgr:
             self.__mgr_archiver = mgr()
             self.logger.debug("Got attribute {0:s} ok".format(aname))
@@ -160,7 +194,7 @@ class OcsEvents(object):
         # get mgr object (cf. mgr = SAL_catchuparchiver())
         aname = 'SAL_catchuparchiver'
         self.logger.debug("Getting attribute {0:s}".format(aname))
-        mgr = ocs_sal_attribute(self.__catchuparchiver, aname)
+        mgr = ocs_sal_attribute(self.__sal_catchuparchiver, aname)
         if mgr:
             self.__mgr_catchuparchiver = mgr()
             self.logger.debug("Got attribute {0:s} ok".format(aname))
@@ -168,7 +202,7 @@ class OcsEvents(object):
         # get mgr object (cf. mgr = SAL_processingcluster())
         aname = 'SAL_processingcluster'
         self.logger.debug("Getting attribute {0:s}".format(aname))
-        mgr = ocs_sal_attribute(self.__processingcluster, aname)
+        mgr = ocs_sal_attribute(self.__sal_processingcluster, aname)
         if mgr:
             self.__mgr_processingcluster = mgr()
             self.logger.debug("Got attribute {0:s} ok".format(aname))
@@ -176,29 +210,41 @@ class OcsEvents(object):
         # get mgr object (cf. mgr = SAL_ocs())
         aname = 'SAL_ocs'
         self.logger.debug("Getting attribute {0:s}".format(aname))
-        mgr = ocs_sal_attribute(self.__ocs, aname)
+        mgr = ocs_sal_attribute(self.__sal_ocs, aname)
         if mgr:
             self.__mgr_ocs = mgr()
             self.logger.debug("Got attribute {0:s} ok".format(aname))
 
         # get data structure(s) (cf. data = ocs_logevent_ocsEntityStartupC())
-        self.__archiverEntitySummaryStateC = self._get_sal_logC(self.__archiver, 'archiver_logevent_archiverEntitySummaryStateC')
-        self.__catchuparchiverEntitySummaryStateC = self._get_sal_logC(self.__catchuparchiver, 'catchuparchiver_logevent_catchuparchiverEntitySummaryStateC')
-        self.__processingclusterEntitySummaryStateC = self._get_sal_logC(self.__processingcluster, 'processingcluster_logevent_processingclusterEntitySummaryStateC')
-        self.__ocsEntitySummaryStateC = self._get_sal_logC(self.__ocs, 'ocs_logevent_ocsEntitySummaryStateC')
+        self.__archiverEntitySummaryStateC = self._get_sal_log_c(
+            self.__sal_archiver, 'archiver_logevent_archiverEntitySummaryStateC')
+        self.__catchuparchiverEntitySummaryStateC = self._get_sal_log_c(
+            self.__sal_catchuparchiver, 'catchuparchiver_logevent_catchuparchiverEntitySummaryStateC')
+        self.__processingclusterEntitySummaryStateC = self._get_sal_log_c(
+            self.__sal_processingcluster, 'processingcluster_logevent_processingclusterEntitySummaryStateC')
+        self.__ocsEntitySummaryStateC = self._get_sal_log_c(
+            self.__sal_ocs, 'ocs_logevent_ocsEntitySummaryStateC')
 
-        self.__archiverEntityStartupC = self._get_sal_logC(self.__archiver, 'archiver_logevent_archiverEntityStartupC')
-        self.__catchuparchiverEntityStartupC = self._get_sal_logC(self.__catchuparchiver, 'catchuparchiver_logevent_catchuparchiverEntityStartupC')
-        self.__processingclusterEntityStartupC = self._get_sal_logC(self.__processingcluster, 'processingcluster_logevent_processingclusterEntityStartupC')
-        self.__ocsEntityStartupC = self._get_sal_logC(self.__ocs, 'ocs_logevent_ocsEntityStartupC')
+        self.__archiverEntityStartupC = self._get_sal_log_c(
+            self.__sal_archiver, 'archiver_logevent_archiverEntityStartupC')
+        self.__catchuparchiverEntityStartupC = self._get_sal_log_c(
+            self.__sal_catchuparchiver, 'catchuparchiver_logevent_catchuparchiverEntityStartupC')
+        self.__processingclusterEntityStartupC = self._get_sal_log_c(
+            self.__sal_processingcluster, 'processingcluster_logevent_processingclusterEntityStartupC')
+        self.__ocsEntityStartupC = self._get_sal_log_c(
+            self.__sal_ocs, 'ocs_logevent_ocsEntityStartupC')
 
-        self.__archiverEntityShutdownC = self._get_sal_logC(self.__archiver, 'archiver_logevent_archiverEntityShutdownC')
-        self.__catchuparchiverEntityShutdownC = self._get_sal_logC(self.__catchuparchiver, 'catchuparchiver_logevent_catchuparchiverEntityShutdownC')
-        self.__processingclusterEntityShutdownC = self._get_sal_logC(self.__processingcluster, 'processingcluster_logevent_processingclusterEntityShutdownC')
-        self.__ocsEntityShutdownC = self._get_sal_logC(self.__ocs, 'ocs_logevent_ocsEntityShutdownC')
+        self.__archiverEntityShutdownC = self._get_sal_log_c(
+            self.__sal_archiver, 'archiver_logevent_archiverEntityShutdownC')
+        self.__catchuparchiverEntityShutdownC = self._get_sal_log_c(
+            self.__sal_catchuparchiver, 'catchuparchiver_logevent_catchuparchiverEntityShutdownC')
+        self.__processingclusterEntityShutdownC = self._get_sal_log_c(
+            self.__sal_processingcluster, 'processingcluster_logevent_processingclusterEntityShutdownC')
+        self.__ocsEntityShutdownC = self._get_sal_log_c(
+            self.__sal_ocs, 'ocs_logevent_ocsEntityShutdownC')
 
-        self.__ocsCommandIssuedC = self._get_sal_logC(self.__ocs, 'ocs_logevent_ocsCommandIssuedC')
-        self.__ocsCommandStatusC = self._get_sal_logC(self.__ocs, 'ocs_logevent_ocsCommandStatusC')
+        self.__ocsCommandIssuedC = self._get_sal_log_c(self.__sal_ocs, 'ocs_logevent_ocsCommandIssuedC')
+        self.__ocsCommandStatusC = self._get_sal_log_c(self.__sal_ocs, 'ocs_logevent_ocsCommandStatusC')
 
         # set up a default event (cf. mgr.salEvent("archiver_logevent_archiverEntityStartup"))
         cname = 'archiver_logevent_archiverEntityStartup'
@@ -223,51 +269,58 @@ class OcsEvents(object):
         self.logger.debug("Started {0:s} {1:s} ok".format(self._system, self._component))
 
     # +
-    # (hidden) method: _get_sal_logC()
+    # (hidden) method: _get_sal_log_c()
     # -
-    def _get_sal_logC(self, salobj=None, event=''):
+    def _get_sal_log_c(self, salobj=None, event=''):
         self.logger.debug("Getting attribute {0:s}".format(event))
-        so = ocs_sal_attribute(salobj, event)
-        if so:
+        s = ocs_sal_attribute(salobj, event)
+        if s:
             self.logger.debug("Got attribute {0:s} ok".format(event))
-            return so()
+            return s()
         else:
             return None
 
     # +
-    # method: sendEvent()
+    # method: send_event()
     # -
-    def sendEvent(self, event='', **kwargs):
-        self.logger.debug("sendEvent() enter")
+    def send_event(self, event='', **kwargs):
+
+        # entry message
+        self.logger.debug("send_event() enter")
 
         # check input(s)
         if not isinstance(event, str) or event == '':
             raise OcsEventsException(OCS_EVENTS_ERROR_NOVAL, "event={0:s}".format(str(event)))
         else:
-            self._event = event
+            self.__event = event
 
         # in simulation, sleep for a random time
         if self._simulate:
             stime = time.sleep(random.uniform(0, 5))
-            self.logger.debug("sendEvent(), in simulation with sleep={0:s}".format(str(stime)))
+            self.logger.debug("send_event(), in simulation with sleep={0:s}".format(str(stime)))
 
         # invoke method
         else:
-            self.__method = self.__event_methods.get(event, None)
+            self.__method = self.__event_methods.get(self.__event, None)
             if self.__method:
                 self.__method(**kwargs)
-        self.logger.debug("sendEvent() exit")
+
+        # exit message
+        self.logger.debug("send_event() exit")
 
     # +
-    # (hidden) method: archiverEntitySummaryState()
+    # (hidden) method: _archiver_entity_summary_state()
     # -
-    def _archiverEntitySummaryState(self, **kwargs):
-        self.logger.debug("_archiverEntitySummaryState() enter")
+    def _archiver_entity_summary_state(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_archiver_entity_summary_state() enter")
+
         if self.__mgr_archiver and self.__archiverEntitySummaryStateC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -285,8 +338,8 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = archiver_logevent_archiverEntitySummaryState(); data.Name = 'Something')
-            self.__archiverEntitySummaryStateC.Address = long(self.__address)
+            # set up payload (cf. data = archiver_logevent_archiverEntitySummaryState() etc)
+            self.__archiverEntitySummaryStateC.Address = int(self.__address)
             self.__archiverEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__archiverEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__archiverEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -298,26 +351,32 @@ class OcsEvents(object):
             self.__archiverEntitySummaryStateC.Timestamp = str(self.__timestamp)
 
             # set up event (cf. mgr.salEvent("archiver_logevent_archiverEntitySummaryState"))
-            lname = 'archiver_logevent_{0:s}'.format(self._event)
+            lname = 'archiver_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_archiver.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_archiverEntitySummaryState(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_archiver.logEvent_archiverEntitySummaryState(self.__archiverEntitySummaryStateC, self.__archiverEntitySummaryStateC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_archiverEntitySummaryState() exit")
+            self.__retval = self.__mgr_archiver.logEvent_archiverEntitySummaryState(
+                self.__archiverEntitySummaryStateC, self.__archiverEntitySummaryStateC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # exit message
+        self.logger.debug("_archiver_entity_summary_state() exit")
 
     # +
-    # (hidden) method: catchuparchiverEntitySummaryState()
+    # (hidden) method: _catchuparchiver_entity_summary_state()
     # -
-    def _catchuparchiverEntitySummaryState(self, **kwargs):
-        self.logger.debug("_catchuparchiverEntitySummaryState() enter")
+    def _catchuparchiver_entity_summary_state(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_catchuparchiver_entity_summary_state() enter")
+
         if self.__mgr_catchuparchiver and self.__catchuparchiverEntitySummaryStateC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -335,8 +394,8 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntitySummaryState(); data.Name = 'Something')
-            self.__catchuparchiverEntitySummaryStateC.Address = long(self.__address)
+            # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntitySummaryState() etc)
+            self.__catchuparchiverEntitySummaryStateC.Address = int(self.__address)
             self.__catchuparchiverEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__catchuparchiverEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__catchuparchiverEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -348,26 +407,32 @@ class OcsEvents(object):
             self.__catchuparchiverEntitySummaryStateC.Timestamp = str(self.__timestamp)
 
             # set up event (cf. mgr.salEvent("catchuparchiver_logevent_catchuparchiverEntitySummaryState"))
-            lname = 'catchuparchiver_logevent_{0:s}'.format(self._event)
+            lname = 'catchuparchiver_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_catchuparchiver.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_catchuparchiverEntitySummaryState(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_catchuparchiver.logEvent_catchuparchiverEntitySummaryState(self.__catchuparchiverEntitySummaryStateC, self.__catchuparchiverEntitySummaryStateC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_catchuparchiverEntitySummaryState() exit")
+            self.__retval = self.__mgr_catchuparchiver.logEvent_catchuparchiverEntitySummaryState(
+                self.__catchuparchiverEntitySummaryStateC, self.__catchuparchiverEntitySummaryStateC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_catchuparchiver_entity_summary_state() exit")
 
     # +
-    # (hidden) method: processingclusterEntitySummaryState()
+    # (hidden) method: _processingcluster_entity_summary_state()
     # -
-    def _processingclusterEntitySummaryState(self, **kwargs):
-        self.logger.debug("_processingclusterEntitySummaryState() enter")
+    def _processingcluster_entity_summary_state(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_processingcluster_entity_summary_state() enter")
+
         if self.__mgr_processingcluster and self.__processingclusterEntitySummaryStateC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -385,8 +450,8 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = processingcluster_logevent_processingclusterEntitySummaryState(); data.Name = 'Something')
-            self.__processingclusterEntitySummaryStateC.Address = long(self.__address)
+            # set up payload (cf. data = processingcluster_logevent_processingclusterEntitySummaryState() etc)
+            self.__processingclusterEntitySummaryStateC.Address = int(self.__address)
             self.__processingclusterEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__processingclusterEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__processingclusterEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -398,26 +463,32 @@ class OcsEvents(object):
             self.__processingclusterEntitySummaryStateC.Timestamp = str(self.__timestamp)
 
             # set up event (cf. mgr.salEvent("processingcluster_logevent_processingclusterEntitySummaryState"))
-            lname = 'processingcluster_logevent_{0:s}'.format(self._event)
+            lname = 'processingcluster_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_processingcluster.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_processingclusterEntitySummaryState(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_processingcluster.logEvent_processingclusterEntitySummaryState(self.__processingclusterEntitySummaryStateC, self.__processingclusterEntitySummaryStateC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_processingclusterEntitySummaryState() exit")
+            self.__retval = self.__mgr_processingcluster.logEvent_processingclusterEntitySummaryState(
+                self.__processingclusterEntitySummaryStateC, self.__processingclusterEntitySummaryStateC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_processingcluster_entity_summary_state() exit")
 
     # +
-    # (hidden) method: ocsEntitySummaryState()
+    # (hidden) method: _ocs_entity_summary_state()
     # -
-    def _ocsEntitySummaryState(self, **kwargs):
-        self.logger.debug("_ocsEntitySummaryState() enter")
+    def _ocs_entity_summary_state(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_ocs_entity_summary_state() enter")
+
         if self.__mgr_ocs and self.__ocsEntitySummaryStateC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -435,8 +506,8 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = ocs_logevent_ocsEntitySummaryState(); data.Name = 'Something')
-            self.__ocsEntitySummaryStateC.Address = long(self.__address)
+            # set up payload (cf. data = ocs_logevent_ocsEntitySummaryState() etc)
+            self.__ocsEntitySummaryStateC.Address = int(self.__address)
             self.__ocsEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__ocsEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__ocsEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -448,26 +519,32 @@ class OcsEvents(object):
             self.__ocsEntitySummaryStateC.Timestamp = str(self.__timestamp)
 
             # set up event (cf. mgr.salEvent("ocs_logevent_ocsEntitySummaryState"))
-            lname = 'ocs_logevent_{0:s}'.format(self._event)
+            lname = 'ocs_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_ocs.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_ocsEntitySummaryState(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_ocs.logEvent_ocsEntitySummaryState(self.__ocsEntitySummaryStateC, self.__ocsEntitySummaryStateC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_ocsEntitySummaryState() exit")
+            self.__retval = self.__mgr_ocs.logEvent_ocsEntitySummaryState(
+                self.__ocsEntitySummaryStateC, self.__ocsEntitySummaryStateC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_ocs_entity_summary_state() exit")
 
     # +
-    # (hidden) method: archiverEntityStartup()
+    # (hidden) method: _archiver_entity_startup()
     # -
-    def _archiverEntityStartup(self, **kwargs):
-        self.logger.debug("_archiverEntityStartup() enter")
+    def _archiver_entity_startup(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_archiver_entity_startup() enter")
+
         if self.__mgr_archiver and self.__archiverEntityStartupC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -480,34 +557,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = archiver_logevent_archiverEntityStartup(); data.Name = 'Something')
+            # set up payload (cf. data = archiver_logevent_archiverEntityStartup() etc)
             self.__archiverEntityStartupC.Name = str(self.__name)
             self.__archiverEntityStartupC.Identifier = float(self.__identifier)
             self.__archiverEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__archiverEntityStartupC.Address = long(self.__address)
+            self.__archiverEntityStartupC.Address = int(self.__address)
             self.__archiverEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("archiver_logevent_archiverEntityStartup"))
-            lname = 'archiver_logevent_{0:s}'.format(self._event)
+            lname = 'archiver_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_archiver.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_archiverEntityStartup(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_archiver.logEvent_archiverEntityStartup(self.__archiverEntityStartupC, self.__archiverEntityStartupC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_archiverEntityStartup() exit")
+            self.__retval = self.__mgr_archiver.logEvent_archiverEntityStartup(
+                self.__archiverEntityStartupC, self.__archiverEntityStartupC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_archiver_entity_startup() exit")
 
     # +
-    # (hidden) method: catchuparchiverEntityStartup()
+    # (hidden) method: _catchuparchiver_entity_startup()
     # -
-    def _catchuparchiverEntityStartup(self, **kwargs):
-        self.logger.debug("_catchuparchiverEntityStartup() enter")
+    def _catchuparchiver_entity_startup(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_catchuparchiver_entity_startup() enter")
+
         if self.__mgr_catchuparchiver and self.__catchuparchiverEntityStartupC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -520,34 +603,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntityStartup(); data.Name = 'Something')
+            # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntityStartup() etc)
             self.__catchuparchiverEntityStartupC.Name = str(self.__name)
             self.__catchuparchiverEntityStartupC.Identifier = float(self.__identifier)
             self.__catchuparchiverEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__catchuparchiverEntityStartupC.Address = long(self.__address)
+            self.__catchuparchiverEntityStartupC.Address = int(self.__address)
             self.__catchuparchiverEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("catchuparchiver_logevent_catchuparchiverEntityStartup"))
-            lname = 'catchuparchiver_logevent_{0:s}'.format(self._event)
+            lname = 'catchuparchiver_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_catchuparchiver.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_catchuparchiverEntityStartup(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_catchuparchiver.logEvent_catchuparchiverEntityStartup(self.__catchuparchiverEntityStartupC, self.__catchuparchiverEntityStartupC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_catchuparchiverEntityStartup() exit")
+            self.__retval = self.__mgr_catchuparchiver.logEvent_catchuparchiverEntityStartup(
+                self.__catchuparchiverEntityStartupC, self.__catchuparchiverEntityStartupC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_catchuparchiver_entity_startup() exit")
 
     # +
-    # (hidden) method: processingclusterEntityStartup()
+    # (hidden) method: _processingcluster_entity_startup()
     # -
-    def _processingclusterEntityStartup(self, **kwargs):
-        self.logger.debug("_processingclusterEntityStartup() enter")
+    def _processingcluster_entity_startup(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_processingcluster_entity_startup() enter")
+
         if self.__mgr_processingcluster and self.__processingclusterEntityStartupC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -560,34 +649,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = processingcluster_logevent_processingclusterEntityStartup(); data.Name = 'Something')
+            # set up payload (cf. data = processingcluster_logevent_processingclusterEntityStartup() etc)
             self.__processingclusterEntityStartupC.Name = str(self.__name)
             self.__processingclusterEntityStartupC.Identifier = float(self.__identifier)
             self.__processingclusterEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__processingclusterEntityStartupC.Address = long(self.__address)
+            self.__processingclusterEntityStartupC.Address = int(self.__address)
             self.__processingclusterEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("processingcluster_logevent_processingclusterEntityStartup"))
-            lname = 'processingcluster_logevent_{0:s}'.format(self._event)
+            lname = 'processingcluster_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_processingcluster.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_processingclusterEntityStartup(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_processingcluster.logEvent_processingclusterEntityStartup(self.__processingclusterEntityStartupC, self.__processingclusterEntityStartupC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_processingclusterEntityStartup() exit")
+            self.__retval = self.__mgr_processingcluster.logEvent_processingclusterEntityStartup(
+                self.__processingclusterEntityStartupC, self.__processingclusterEntityStartupC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_processingcluster_entity_startup() exit")
 
     # +
-    # (hidden) method: ocsEntityStartup()
+    # (hidden) method: _ocs_entity_startup()
     # -
-    def _ocsEntityStartup(self, **kwargs):
-        self.logger.debug("_ocsEntityStartup() enter")
+    def _ocs_entity_startup(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_ocs_entity_startup() enter")
+
         if self.__mgr_ocs and self.__ocsEntityStartupC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -600,34 +695,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = ocs_logevent_ocsEntityStartup(); data.Name = 'Something')
+            # set up payload (cf. data = ocs_logevent_ocsEntityStartup() etc)
             self.__ocsEntityStartupC.Name = str(self.__name)
             self.__ocsEntityStartupC.Identifier = float(self.__identifier)
             self.__ocsEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__ocsEntityStartupC.Address = long(self.__address)
+            self.__ocsEntityStartupC.Address = int(self.__address)
             self.__ocsEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("ocs_logevent_ocsEntityStartup"))
-            lname = 'ocs_logevent_{0:s}'.format(self._event)
+            lname = 'ocs_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_ocs.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_ocsEntityStartup(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_ocs.logEvent_ocsEntityStartup(self.__ocsEntityStartupC, self.__ocsEntityStartupC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_ocsEntityStartup() exit")
+            self.__retval = self.__mgr_ocs.logEvent_ocsEntityStartup(
+                self.__ocsEntityStartupC, self.__ocsEntityStartupC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_ocs_entity_startup() exit")
 
     # +
-    # (hidden) method: archiverEntityShutdown()
+    # (hidden) method: _archiver_entity_shutdown()
     # -
-    def _archiverEntityShutdown(self, **kwargs):
-        self.logger.debug("_archiverEntityShutdown() enter")
+    def _archiver_entity_shutdown(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_archiver_entity_shutdown() enter")
+
         if self.__mgr_archiver and self.__archiverEntityShutdownC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -640,34 +741,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = archiver_logevent_archiverEntityShutdown(); data.Name = 'Something')
+            # set up payload (cf. data = archiver_logevent_archiverEntityShutdown() etc)
             self.__archiverEntityShutdownC.Name = str(self.__name)
             self.__archiverEntityShutdownC.Identifier = float(self.__identifier)
             self.__archiverEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__archiverEntityShutdownC.Address = long(self.__address)
+            self.__archiverEntityShutdownC.Address = int(self.__address)
             self.__archiverEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("archiver_logevent_archiverEntityShutdown"))
-            lname = 'archiver_logevent_{0:s}'.format(self._event)
+            lname = 'archiver_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_archiver.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_archiverEntityShutdown(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_archiver.logEvent_archiverEntityShutdown(self.__archiverEntityShutdownC, self.__archiverEntityShutdownC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_archiverEntityShutdown() exit")
+            self.__retval = self.__mgr_archiver.logEvent_archiverEntityShutdown(
+                self.__archiverEntityShutdownC, self.__archiverEntityShutdownC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_archiver_entity_shutdown() exit")
 
     # +
-    # (hidden) method: catchuparchiverEntityShutdown()
+    # (hidden) method: _catchuparchiver_entity_shutdown()
     # -
-    def _catchuparchiverEntityShutdown(self, **kwargs):
-        self.logger.debug("_catchuparchiverEntityShutdown() enter")
+    def _catchuparchiver_entity_shutdown(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_catchuparchiver_entity_shutdown() enter")
+
         if self.__mgr_catchuparchiver and self.__catchuparchiverEntityShutdownC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -680,34 +787,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntityShutdown(); data.Name = 'Something')
+            # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntityShutdown() etc)
             self.__catchuparchiverEntityShutdownC.Name = str(self.__name)
             self.__catchuparchiverEntityShutdownC.Identifier = float(self.__identifier)
             self.__catchuparchiverEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__catchuparchiverEntityShutdownC.Address = long(self.__address)
+            self.__catchuparchiverEntityShutdownC.Address = int(self.__address)
             self.__catchuparchiverEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("catchuparchiver_logevent_catchuparchiverEntityShutdown"))
-            lname = 'catchuparchiver_logevent_{0:s}'.format(self._event)
+            lname = 'catchuparchiver_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_catchuparchiver.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_catchuparchiverEntityShutdown(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_catchuparchiver.logEvent_catchuparchiverEntityShutdown(self.__catchuparchiverEntityShutdownC, self.__catchuparchiverEntityShutdownC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_catchuparchiverEntityShutdown() exit")
+            self.__retval = self.__mgr_catchuparchiver.logEvent_catchuparchiverEntityShutdown(
+                self.__catchuparchiverEntityShutdownC, self.__catchuparchiverEntityShutdownC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_catchuparchiver_entity_shutdown() exit")
 
     # +
-    # (hidden) method: processingclusterEntityShutdown()
+    # (hidden) method: _processingcluster_entity_shutdown()
     # -
-    def _processingclusterEntityShutdown(self, **kwargs):
-        self.logger.debug("_processingclusterEntityShutdown() enter")
+    def _processingcluster_entity_shutdown(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_processingcluster_entity_shutdown() enter")
+
         if self.__mgr_processingcluster and self.__processingclusterEntityShutdownC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -720,34 +833,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = processingcluster_logevent_processingclusterEntityShutdown(); data.Name = 'Something')
+            # set up payload (cf. data = processingcluster_logevent_processingclusterEntityShutdown() etc)
             self.__processingclusterEntityShutdownC.Name = str(self.__name)
             self.__processingclusterEntityShutdownC.Identifier = float(self.__identifier)
             self.__processingclusterEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__processingclusterEntityShutdownC.Address = long(self.__address)
+            self.__processingclusterEntityShutdownC.Address = int(self.__address)
             self.__processingclusterEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("processingcluster_logevent_processingclusterEntityShutdown"))
-            lname = 'processingcluster_logevent_{0:s}'.format(self._event)
+            lname = 'processingcluster_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_processingcluster.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_processingclusterEntityShutdown(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_processingcluster.logEvent_processingclusterEntityShutdown(self.__processingclusterEntityShutdownC, self.__processingclusterEntityShutdownC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_processingclusterEntityShutdown() exit")
+            self.__retval = self.__mgr_processingcluster.logEvent_processingclusterEntityShutdown(
+                self.__processingclusterEntityShutdownC, self.__processingclusterEntityShutdownC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_processingcluster_entity_shutdown() exit")
 
     # +
-    # (hidden) method: ocsEntityShutdown()
+    # (hidden) method: ocs_entity_shutdown()
     # -
-    def _ocsEntityShutdown(self, **kwargs):
-        self.logger.debug("_ocsEntityShutdown() enter")
+    def _ocs_entity_shutdown(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_ocs_entity_shutdown() enter")
+
         if self.__mgr_ocs and self.__ocsEntityShutdownC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -760,34 +879,40 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = ocs_logevent_ocsEntityShutdown(); data.Name = 'Something')
+            # set up payload (cf. data = ocs_logevent_ocsEntityShutdown() etc)
             self.__ocsEntityShutdownC.Name = str(self.__name)
             self.__ocsEntityShutdownC.Identifier = float(self.__identifier)
             self.__ocsEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__ocsEntityShutdownC.Address = long(self.__address)
+            self.__ocsEntityShutdownC.Address = int(self.__address)
             self.__ocsEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("ocs_logevent_ocsEntityShutdown"))
-            lname = 'ocs_logevent_{0:s}'.format(self._event)
+            lname = 'ocs_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_ocs.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_ocsEntityShutdown(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_ocs.logEvent_ocsEntityShutdown(self.__ocsEntityShutdownC, self.__ocsEntityShutdownC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_ocsEntityShutdown() exit")
+            self.__retval = self.__mgr_ocs.logEvent_ocsEntityShutdown(
+                self.__ocsEntityShutdownC, self.__ocsEntityShutdownC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_ocs_entity_shutdown() exit")
 
     # +
-    # (hidden) method: ocsCommandIssued()
+    # (hidden) method: _ocs_command_issued()
     # -
-    def _ocsCommandIssued(self, **kwargs):
-        self.logger.debug("_ocsCommandIssued() enter")
+    def _ocs_command_issued(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_ocs_command_issued() enter")
+
         if self.__mgr_ocs and self.__ocsCommandIssuedC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__command_source = kwargs.get('CommandSource', '')
@@ -802,36 +927,42 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = ocs_logevent_ocsCommandIssued(); data.Name = 'Something')
+            # set up payload (cf. data = ocs_logevent_ocsCommandIssued() etc)
             self.__ocsCommandIssuedC.CommandSource = str(self.__command_source)
             self.__ocsCommandIssuedC.CommandSent = str(self.__command_sent)
             self.__ocsCommandIssuedC.Identifier = float(self.__identifier)
             self.__ocsCommandIssuedC.priority = int(self.__priority)
-            self.__ocsCommandIssuedC.ReturnValue = long(self.__return_value)
-            self.__ocsCommandIssuedC.SequenceNumber = long(self.__sequence_number)
+            self.__ocsCommandIssuedC.ReturnValue = int(self.__return_value)
+            self.__ocsCommandIssuedC.SequenceNumber = int(self.__sequence_number)
             self.__ocsCommandIssuedC.Timestamp = str(self.__timestamp)
 
             # set up event (cf. mgr.salEvent("ocs_logevent_ocsCommandIssued"))
-            lname = 'ocs_logevent_{0:s}'.format(self._event)
+            lname = 'ocs_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_ocs.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_ocsCommandIssued(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_ocs.logEvent_ocsCommandIssued(self.__ocsCommandIssuedC, self.__ocsCommandIssuedC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_ocsCommandIssued() exit")
+            self.__retval = self.__mgr_ocs.logEvent_ocsCommandIssued(
+                self.__ocsCommandIssuedC, self.__ocsCommandIssuedC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_ocs_command_issued() exit")
 
     # +
-    # (hidden) method: ocsCommandStatus()
+    # (hidden) method: _ocs_command_status()
     # -
-    def _ocsCommandStatus(self, **kwargs):
-        self.logger.debug("_ocsCommandStatus() enter")
+    def _ocs_command_status(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_ocs_command_status() enter")
+
         if self.__mgr_ocs and self.__ocsCommandStatusC and kwargs:
 
             # dump dictionary
             for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k),str(v)))
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__command_source = kwargs.get('CommandSource', '')
@@ -847,26 +978,29 @@ class OcsEvents(object):
             if not self.__match:
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
-            # set up payload (cf. data = ocs_logevent_ocsCommandStatus(); data.Name = 'Something')
+            # set up payload (cf. data = ocs_logevent_ocsCommandStatus() etc)
             self.__ocsCommandStatusC.CommandSource = str(self.__command_source)
             self.__ocsCommandStatusC.CommandSent = str(self.__command_sent)
             self.__ocsCommandStatusC.Identifier = float(self.__identifier)
             self.__ocsCommandStatusC.priority = int(self.__priority)
             self.__ocsCommandStatusC.Status = str(self.__status)
-            self.__ocsCommandStatusC.StatusValue = long(self.__status_value)
-            self.__ocsCommandStatusC.SequenceNumber = long(self.__sequence_number)
+            self.__ocsCommandStatusC.StatusValue = int(self.__status_value)
+            self.__ocsCommandStatusC.SequenceNumber = int(self.__sequence_number)
             self.__ocsCommandStatusC.Timestamp = str(self.__timestamp)
 
             # set up event (cf. mgr.salEvent("ocs_logevent_ocsCommandStatus"))
-            lname = 'ocs_logevent_{0:s}'.format(self._event)
+            lname = 'ocs_logevent_{0:s}'.format(self.__event)
             self.logger.debug("setting up for event {0:s}".format(lname))
             self.__mgr_ocs.salEvent(lname)
 
             # issue event (cf. retval = mgr.logEvent_ocsCommandStatus(data, priority))
             self.logger.debug("issuing event {0:s}".format(lname))
-            self.__retval = self.__mgr_ocs.logEvent_ocsCommandStatus(self.__ocsCommandStatusC, self.__ocsCommandStatusC.priority)
-            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname,self.__retval))
-        self.logger.debug("_ocsCommandStatus() exit")
+            self.__retval = self.__mgr_ocs.logEvent_ocsCommandStatus(
+                self.__ocsCommandStatusC, self.__ocsCommandStatusC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # entry message
+        self.logger.debug("_ocs_command_status() exit")
 
     # +
     # decorator(s)
@@ -895,7 +1029,7 @@ class OcsEvents(object):
 # -
 if __name__ == "__main__":
 
-    ehv = None
+    evh = None
     try:
         evh = OcsEvents(False)
     except OcsEventsException as e:
@@ -905,15 +1039,54 @@ if __name__ == "__main__":
 
         # send event with payload
         ocsid = ocs_id(False)
-        evh.sendEvent('archiverEntityStartup', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
-        evh.sendEvent('catchuparchiverEntityStartup', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
-        evh.sendEvent('processingclusterEntityStartup', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
-        evh.sendEvent('ocsEntityStartup', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
+        evh.send_event('archiverEntityStartup',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
+        evh.send_event('catchuparchiverEntityStartup',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
+        evh.send_event('processingclusterEntityStartup',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
+        evh.send_event('ocsEntityStartup',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
 
         # send event with payload
         ocsid = ocs_id(False)
-        evh.sendEvent('archiverEntityShutdown', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
-        evh.sendEvent('catchuparchiverEntityShutdown', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
-        evh.sendEvent('processingclusterEntityShutdown', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
-        evh.sendEvent('ocsEntityShutdown', Name='Junk', Identifier=float(ocsid), Timestamp=ocs_mjd_to_iso(ocsid), Address=id(evh), priority=SAL__EVENT_INFO)
-
+        evh.send_event('archiverEntityShutdown',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
+        evh.send_event('catchuparchiverEntityShutdown',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
+        evh.send_event('processingclusterEntityShutdown',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
+        evh.send_event('ocsEntityShutdown',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)

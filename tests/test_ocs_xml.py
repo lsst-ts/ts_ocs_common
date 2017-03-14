@@ -6,6 +6,12 @@
 # import(s)
 # -
 from ocs_xml import *
+import glob
+
+# +
+# __doc__ string
+# _
+__doc__ = """test of ocs_xml"""
 
 
 # +
