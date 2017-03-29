@@ -32,6 +32,10 @@ API:
         if the input arguments are invalid, returns None. If the inputs are valid, returns the
         object = getattr(sal_object, attribute). On error, raises an OcsGenericEntityException
 
+    ocs_sal_lts237(incmd='')
+        if the input argument is invalid, returns default dictionary. If the input is valid, 
+        returns a dictionary of parsed arguments in line with LTS-237.
+
 CLI:
 
     python $TS_OCS_COMMON_SRC/ocs_sal.py --help
@@ -133,6 +137,68 @@ def ocs_sal_attribute(sal_object=None, attribute=''):
 
     # return object or None
     return sal_retval
+
+
+# +
+# function: ocs_sal_lts237()
+# -
+def ocs_sal_lts237(incmd=''):
+    """
+	:param incmd: input command string
+	:param attribute: an attribute of the input SAL object
+	:return: dictionary of parsed objects
+    """
+
+    # default dictionary
+    defdict = {
+        'cmd': None,
+        'entity': None,
+        'params': None,
+        'timeout': None,
+        }
+
+    # check input parameters
+    if not isinstance(incmd, str) or incmd == '':
+        pass
+
+    # parse input command
+    else:
+        clist = ['abort', 'disable', 'enable', 'entercontrol', 'exitcontrol', 'setvalue', 'standby', 'start', 'stop']
+        tlist = ['timeout=']
+        alist = ['device=', 'parameter=', 'startid=', 'value=']
+        words = incmd.split()
+
+        # loop around words
+        for v in words:
+            vl = v.lower()
+
+            # get the command
+            if vl in clist:
+                defdict['cmd'] = vl
+
+            # get the entity
+            if vl.find('entity=') >= 0:
+                defdict['entity'] = vl.split('=')[1]
+
+            # get any timeout
+            for T1 in tlist:
+                if vl.find(T1) >= 0:
+                    try:
+                        value = int(vl.split('=')[1])
+                    except ValueError:
+                        value = None
+                    defdict['timeout'] = value
+
+            # get other arguments
+            for A in alist:
+                if vl.find(A) >= 0:
+                    if not defdict['params']:
+                        defdict['params'] = v
+                    else:
+                        defdict['params'] = '{0:s} {1:s}'.format(defdict['params'], v)
+
+    # return dictionary
+    return defdict
 
 
 # +

@@ -215,9 +215,9 @@ ocsGenericEntityEntityDictionary = {
     "CALCS": ['CalibrationScreen', 'CalibrationIllumination', 'CalibrationDiodes',
               'CalibrationSpectrograph', 'CollimatedBeamProjector'],
     "CCS": ['Camera'],
-    "DMCS": ['Dm', 'Archiver', 'CatchupArchiver', 'ProcessingCluster'],
+    "DMCS": ['Archiver', 'CatchupArchiver', 'ProcessingCluster'],
     "EMCS": ['VisibleAllSkyCamera', 'InfraRedAllSkyCamera', 'DifferentialImageMotionMonitor'],
-    "OCS": ['ocs', 'Sequencer'],
+    "OCS": ['Sequencer'],
     "SFCS": ['AirConditioning', 'PowerConditioning'],
     "TCS": ['Mount', 'Enclosure'],
     "TEST": ['Test']
