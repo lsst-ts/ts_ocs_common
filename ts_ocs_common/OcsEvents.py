@@ -91,11 +91,13 @@ class OcsEvents(object):
         self.__sal_catchuparchiver = None
         self.__sal_processingcluster = None
         self.__sal_ocs = None
+        self.__sal_sequencer = None
 
         self.__mgr_archiver = None
         self.__mgr_catchuparchiver = None
         self.__mgr_processingcluster = None
         self.__mgr_ocs = None
+        self.__mgr_sequencer = None
 
         self.__address = None
         self.__command_source = None
@@ -123,19 +125,25 @@ class OcsEvents(object):
         self.__catchuparchiverEntitySummaryStateC = None
         self.__processingclusterEntitySummaryStateC = None
         self.__ocsEntitySummaryStateC = None
+        self.__sequencerEntitySummaryStateC = None
 
         self.__archiverEntityStartupC = None
         self.__catchuparchiverEntityStartupC = None
         self.__processingclusterEntityStartupC = None
         self.__ocsEntityStartupC = None
+        self.__sequencerEntityStartupC = None
 
         self.__archiverEntityShutdownC = None
         self.__catchuparchiverEntityShutdownC = None
         self.__processingclusterEntityShutdownC = None
         self.__ocsEntityShutdownC = None
+        self.__sequencerEntityShutdownC = None
 
         self.__ocsCommandIssuedC = None
+        self.__sequencerCommandIssuedC = None
+
         self.__ocsCommandStatusC = None
+        self.__sequencerCommandStatusC = None
 
         # event methods
         self.__event_methods = {
@@ -143,16 +151,21 @@ class OcsEvents(object):
             'catchuparchiverEntitySummaryState': self._catchuparchiver_entity_summary_state,
             'processingclusterEntitySummaryState': self._processingcluster_entity_summary_state,
             'ocsEntitySummaryState': self._ocs_entity_summary_state,
+            'sequencerEntitySummaryState': self._sequencer_entity_summary_state,
             'archiverEntityStartup': self._archiver_entity_startup,
             'catchuparchiverEntityStartup': self._catchuparchiver_entity_startup,
             'processingclusterEntityStartup': self._processingcluster_entity_startup,
             'ocsEntityStartup': self._ocs_entity_startup,
+            'sequencerEntityStartup': self._sequencer_entity_startup,
             'archiverEntityShutdown': self._archiver_entity_shutdown,
             'catchuparchiverEntityShutdown': self._catchuparchiver_entity_shutdown,
             'processingclusterEntityShutdown': self._processingcluster_entity_shutdown,
             'ocsEntityShutdown': self._ocs_entity_shutdown,
+            'sequencerEntityShutdown': self._sequencer_entity_shutdown,
             'ocsCommandIssued': self._ocs_command_issued,
-            'ocsCommandStatus': self._ocs_command_status
+            'sequencerCommandIssued': self._sequencer_command_issued,
+            'ocsCommandStatus': self._ocs_command_status,
+            'sequencerCommandStatus': self._sequencer_command_status
             }
 
         # import the SAL_archiver (cf. from SALPY_archiver import *)
@@ -181,6 +194,13 @@ class OcsEvents(object):
         self.logger.debug("Importing {0:s}".format(mname))
         self.__sal_ocs = ocs_sal_import(mname)
         if self.__sal_ocs:
+            self.logger.debug("Imported {0:s} ok".format(mname))
+
+        # import the SAL_sequencer (cf. from SALPY_sequencer import *)
+        mname = 'SALPY_sequencer'
+        self.logger.debug("Importing {0:s}".format(mname))
+        self.__sal_sequencer = ocs_sal_import(mname)
+        if self.__sal_sequencer:
             self.logger.debug("Imported {0:s} ok".format(mname))
 
         # get mgr object (cf. mgr = SAL_archiver())
@@ -215,6 +235,14 @@ class OcsEvents(object):
             self.__mgr_ocs = mgr()
             self.logger.debug("Got attribute {0:s} ok".format(aname))
 
+        # get mgr object (cf. mgr = SAL_sequencer())
+        aname = 'SAL_sequencer'
+        self.logger.debug("Getting attribute {0:s}".format(aname))
+        mgr = ocs_sal_attribute(self.__sal_sequencer, aname)
+        if mgr:
+            self.__mgr_sequencer = mgr()
+            self.logger.debug("Got attribute {0:s} ok".format(aname))
+
         # get data structure(s) (cf. data = ocs_logevent_ocsEntityStartupC())
         self.__archiverEntitySummaryStateC = self._get_sal_log_c(
             self.__sal_archiver, 'archiver_logevent_archiverEntitySummaryStateC')
@@ -224,6 +252,8 @@ class OcsEvents(object):
             self.__sal_processingcluster, 'processingcluster_logevent_processingclusterEntitySummaryStateC')
         self.__ocsEntitySummaryStateC = self._get_sal_log_c(
             self.__sal_ocs, 'ocs_logevent_ocsEntitySummaryStateC')
+        self.__sequencerEntitySummaryStateC = self._get_sal_log_c(
+            self.__sal_sequencer, 'sequencer_logevent_sequencerEntitySummaryStateC')
 
         self.__archiverEntityStartupC = self._get_sal_log_c(
             self.__sal_archiver, 'archiver_logevent_archiverEntityStartupC')
@@ -233,6 +263,8 @@ class OcsEvents(object):
             self.__sal_processingcluster, 'processingcluster_logevent_processingclusterEntityStartupC')
         self.__ocsEntityStartupC = self._get_sal_log_c(
             self.__sal_ocs, 'ocs_logevent_ocsEntityStartupC')
+        self.__sequencerEntityStartupC = self._get_sal_log_c(
+            self.__sal_sequencer, 'sequencer_logevent_sequencerEntityStartupC')
 
         self.__archiverEntityShutdownC = self._get_sal_log_c(
             self.__sal_archiver, 'archiver_logevent_archiverEntityShutdownC')
@@ -242,9 +274,16 @@ class OcsEvents(object):
             self.__sal_processingcluster, 'processingcluster_logevent_processingclusterEntityShutdownC')
         self.__ocsEntityShutdownC = self._get_sal_log_c(
             self.__sal_ocs, 'ocs_logevent_ocsEntityShutdownC')
+        self.__sequencerEntityShutdownC = self._get_sal_log_c(
+            self.__sal_sequencer, 'sequencer_logevent_sequencerEntityShutdownC')
 
         self.__ocsCommandIssuedC = self._get_sal_log_c(self.__sal_ocs, 'ocs_logevent_ocsCommandIssuedC')
+        self.__sequencerCommandIssuedC = self._get_sal_log_c(
+            self.__sal_sequencer, 'sequencer_logevent_sequencerCommandIssuedC')
+ 
         self.__ocsCommandStatusC = self._get_sal_log_c(self.__sal_ocs, 'ocs_logevent_ocsCommandStatusC')
+        self.__sequencerCommandStatusC = self._get_sal_log_c(
+            self.__sal_sequencer, 'sequencer_logevent_sequencerCommandStatusC')
 
         # set up a default event (cf. mgr.salEvent("archiver_logevent_archiverEntityStartup"))
         cname = 'archiver_logevent_archiverEntityStartup'
@@ -417,7 +456,7 @@ class OcsEvents(object):
                 self.__catchuparchiverEntitySummaryStateC, self.__catchuparchiverEntitySummaryStateC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_catchuparchiver_entity_summary_state() exit")
 
     # +
@@ -473,7 +512,7 @@ class OcsEvents(object):
                 self.__processingclusterEntitySummaryStateC, self.__processingclusterEntitySummaryStateC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_processingcluster_entity_summary_state() exit")
 
     # +
@@ -529,8 +568,64 @@ class OcsEvents(object):
                 self.__ocsEntitySummaryStateC, self.__ocsEntitySummaryStateC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_ocs_entity_summary_state() exit")
+
+    # +
+    # (hidden) method: _sequencer_entity_summary_state()
+    # -
+    def _sequencer_entity_summary_state(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_sequencer_entity_summary_state() enter")
+
+        if self.__mgr_sequencer and self.__sequencerEntitySummaryStateC and kwargs:
+
+            # dump dictionary
+            for k, v in kwargs.items():
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+
+            # get values from kwargs dictionary
+            self.__address = kwargs.get('Address', SAL__ERROR)
+            self.__commands = kwargs.get('CommandsAvailable', '')
+            self.__configurations = kwargs.get('ConfigurationsAvailable', '')
+            self.__current_state = kwargs.get('CurrentState', 'UNKNOWN')
+            self.__executing = kwargs.get('Executing', '')
+            self.__identifier = kwargs.get('Identifier', ocs_id(False))
+            self.__name = kwargs.get('Name', os.getenv('USER'))
+            self.__previous_state = kwargs.get('PreviousState', 'UNKNOWN')
+            self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
+            self.__timestamp = kwargs.get('Timestamp', '')
+
+            self.__match = re.search(ISO_PATTERN, self.__timestamp)
+            if not self.__match:
+                self.__timestamp = ocs_mjd_to_iso(self.__identifier)
+
+            # set up payload (cf. data = s_logevent_sEntitySummaryState() etc)
+            self.__sequencerEntitySummaryStateC.Address = int(self.__address)
+            self.__sequencerEntitySummaryStateC.CommandsAvailable = str(self.__commands)
+            self.__sequencerEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
+            self.__sequencerEntitySummaryStateC.CurrentState = str(self.__current_state)
+            self.__sequencerEntitySummaryStateC.Executing = str(self.__executing)
+            self.__sequencerEntitySummaryStateC.Identifier = float(self.__identifier)
+            self.__sequencerEntitySummaryStateC.Name = str(self.__name)
+            self.__sequencerEntitySummaryStateC.PreviousState = str(self.__previous_state)
+            self.__sequencerEntitySummaryStateC.priority = int(self.__priority)
+            self.__sequencerEntitySummaryStateC.Timestamp = str(self.__timestamp)
+
+            # set up event (cf. mgr.salEvent("sequencer_logevent_sequencerEntitySummaryState"))
+            lname = 'sequencer_logevent_{0:s}'.format(self.__event)
+            self.logger.debug("setting up for event {0:s}".format(lname))
+            self.__mgr_sequencer.salEvent(lname)
+
+            # issue event (cf. retval = mgr.logEvent_sequencerEntitySummaryState(data, priority))
+            self.logger.debug("issuing event {0:s}".format(lname))
+            self.__retval = self.__mgr_sequencer.logEvent_sequencerEntitySummaryState(
+                self.__sequencerEntitySummaryStateC, self.__sequencerEntitySummaryStateC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # exit message
+        self.logger.debug("_sequencer_entity_summary_state() exit")
 
     # +
     # (hidden) method: _archiver_entity_startup()
@@ -575,7 +670,7 @@ class OcsEvents(object):
                 self.__archiverEntityStartupC, self.__archiverEntityStartupC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_archiver_entity_startup() exit")
 
     # +
@@ -621,7 +716,7 @@ class OcsEvents(object):
                 self.__catchuparchiverEntityStartupC, self.__catchuparchiverEntityStartupC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_catchuparchiver_entity_startup() exit")
 
     # +
@@ -667,7 +762,7 @@ class OcsEvents(object):
                 self.__processingclusterEntityStartupC, self.__processingclusterEntityStartupC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_processingcluster_entity_startup() exit")
 
     # +
@@ -713,8 +808,54 @@ class OcsEvents(object):
                 self.__ocsEntityStartupC, self.__ocsEntityStartupC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_ocs_entity_startup() exit")
+
+    # +
+    # (hidden) method: _sequencer_entity_startup()
+    # -
+    def _sequencer_entity_startup(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_sequencer_entity_startup() enter")
+
+        if self.__mgr_sequencer and self.__sequencerEntityStartupC and kwargs:
+
+            # dump dictionary
+            for k, v in kwargs.items():
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+
+            # get values from kwargs dictionary
+            self.__address = kwargs.get('Address', SAL__ERROR)
+            self.__identifier = kwargs.get('Identifier', ocs_id(False))
+            self.__name = kwargs.get('Name', os.getenv('USER'))
+            self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
+            self.__timestamp = kwargs.get('Timestamp', '')
+
+            self.__match = re.search(ISO_PATTERN, self.__timestamp)
+            if not self.__match:
+                self.__timestamp = ocs_mjd_to_iso(self.__identifier)
+
+            # set up payload (cf. data = sequencer_logevent_sequencerEntityStartup() etc)
+            self.__sequencerEntityStartupC.Name = str(self.__name)
+            self.__sequencerEntityStartupC.Identifier = float(self.__identifier)
+            self.__sequencerEntityStartupC.Timestamp = str(self.__timestamp)
+            self.__sequencerEntityStartupC.Address = int(self.__address)
+            self.__sequencerEntityStartupC.priority = int(self.__priority)
+
+            # set up event (cf. mgr.salEvent("sequencer_logevent_sequencerEntityStartup"))
+            lname = 'sequencer_logevent_{0:s}'.format(self.__event)
+            self.logger.debug("setting up for event {0:s}".format(lname))
+            self.__mgr_sequencer.salEvent(lname)
+
+            # issue event (cf. retval = mgr.logEvent_sequencerEntityStartup(data, priority))
+            self.logger.debug("issuing event {0:s}".format(lname))
+            self.__retval = self.__mgr_sequencer.logEvent_sequencerEntityStartup(
+                self.__sequencerEntityStartupC, self.__sequencerEntityStartupC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # exit message
+        self.logger.debug("_sequencer_entity_startup() exit")
 
     # +
     # (hidden) method: _archiver_entity_shutdown()
@@ -759,7 +900,7 @@ class OcsEvents(object):
                 self.__archiverEntityShutdownC, self.__archiverEntityShutdownC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_archiver_entity_shutdown() exit")
 
     # +
@@ -805,7 +946,7 @@ class OcsEvents(object):
                 self.__catchuparchiverEntityShutdownC, self.__catchuparchiverEntityShutdownC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_catchuparchiver_entity_shutdown() exit")
 
     # +
@@ -851,7 +992,7 @@ class OcsEvents(object):
                 self.__processingclusterEntityShutdownC, self.__processingclusterEntityShutdownC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_processingcluster_entity_shutdown() exit")
 
     # +
@@ -897,8 +1038,54 @@ class OcsEvents(object):
                 self.__ocsEntityShutdownC, self.__ocsEntityShutdownC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_ocs_entity_shutdown() exit")
+
+    # +
+    # (hidden) method: _sequencer_entity_shutdown()
+    # -
+    def _sequencer_entity_shutdown(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_sequencer_entity_shutdown() enter")
+
+        if self.__mgr_sequencer and self.__sequencerEntityShutdownC and kwargs:
+
+            # dump dictionary
+            for k, v in kwargs.items():
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+
+            # get values from kwargs dictionary
+            self.__address = kwargs.get('Address', SAL__ERROR)
+            self.__identifier = kwargs.get('Identifier', ocs_id(False))
+            self.__name = kwargs.get('Name', os.getenv('USER'))
+            self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
+            self.__timestamp = kwargs.get('Timestamp', '')
+
+            self.__match = re.search(ISO_PATTERN, self.__timestamp)
+            if not self.__match:
+                self.__timestamp = ocs_mjd_to_iso(self.__identifier)
+
+            # set up payload (cf. data = sequencer_logevent_sequencerEntityShutdown() etc)
+            self.__sequencerEntityShutdownC.Name = str(self.__name)
+            self.__sequencerEntityShutdownC.Identifier = float(self.__identifier)
+            self.__sequencerEntityShutdownC.Timestamp = str(self.__timestamp)
+            self.__sequencerEntityShutdownC.Address = int(self.__address)
+            self.__sequencerEntityShutdownC.priority = int(self.__priority)
+
+            # set up event (cf. mgr.salEvent("sequencer_logevent_sequencerEntityShutdown"))
+            lname = 'sequencer_logevent_{0:s}'.format(self.__event)
+            self.logger.debug("setting up for event {0:s}".format(lname))
+            self.__mgr_sequencer.salEvent(lname)
+
+            # issue event (cf. retval = mgr.logEvent_sequencerEntityShutdown(data, priority))
+            self.logger.debug("issuing event {0:s}".format(lname))
+            self.__retval = self.__mgr_sequencer.logEvent_sequencerEntityShutdown(
+                self.__sequencerEntityShutdownC, self.__sequencerEntityShutdownC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # exit message
+        self.logger.debug("_sequencer_entity_shutdown() exit")
 
     # +
     # (hidden) method: _ocs_command_issued()
@@ -947,8 +1134,58 @@ class OcsEvents(object):
                 self.__ocsCommandIssuedC, self.__ocsCommandIssuedC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_ocs_command_issued() exit")
+
+    # +
+    # (hidden) method: _sequencer_command_issued()
+    # -
+    def _sequencer_command_issued(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_sequencer_command_issued() enter")
+
+        if self.__mgr_sequencer and self.__sequencerCommandIssuedC and kwargs:
+
+            # dump dictionary
+            for k, v in kwargs.items():
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+
+            # get values from kwargs dictionary
+            self.__command_source = kwargs.get('CommandSource', '')
+            self.__command_sent = kwargs.get('CommandSent', '')
+            self.__identifier = kwargs.get('Identifier', ocs_id(False))
+            self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
+            self.__return_value = kwargs.get('ReturnValue', '')
+            self.__sequence_number = kwargs.get('SequenceNumber', '')
+            self.__timestamp = kwargs.get('Timestamp', '')
+
+            self.__match = re.search(ISO_PATTERN, self.__timestamp)
+            if not self.__match:
+                self.__timestamp = ocs_mjd_to_iso(self.__identifier)
+
+            # set up payload (cf. data = sequencer_logevent_sequencerCommandIssued() etc)
+            self.__sequencerCommandIssuedC.CommandSource = str(self.__command_source)
+            self.__sequencerCommandIssuedC.CommandSent = str(self.__command_sent)
+            self.__sequencerCommandIssuedC.Identifier = float(self.__identifier)
+            self.__sequencerCommandIssuedC.priority = int(self.__priority)
+            self.__sequencerCommandIssuedC.ReturnValue = int(self.__return_value)
+            self.__sequencerCommandIssuedC.SequenceNumber = int(self.__sequence_number)
+            self.__sequencerCommandIssuedC.Timestamp = str(self.__timestamp)
+
+            # set up event (cf. mgr.salEvent("sequencer_logevent_sequencerCommandIssued"))
+            lname = 'sequencer_logevent_{0:s}'.format(self.__event)
+            self.logger.debug("setting up for event {0:s}".format(lname))
+            self.__mgr_sequencer.salEvent(lname)
+
+            # issue event (cf. retval = mgr.logEvent_sequencerCommandIssued(data, priority))
+            self.logger.debug("issuing event {0:s}".format(lname))
+            self.__retval = self.__mgr_sequencer.logEvent_sequencerCommandIssued(
+                self.__sequencerCommandIssuedC, self.__sequencerCommandIssuedC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # exit message
+        self.logger.debug("_sequencer_command_issued() exit")
 
     # +
     # (hidden) method: _ocs_command_status()
@@ -999,8 +1236,60 @@ class OcsEvents(object):
                 self.__ocsCommandStatusC, self.__ocsCommandStatusC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
-        # entry message
+        # exit message
         self.logger.debug("_ocs_command_status() exit")
+
+    # +
+    # (hidden) method: _sequencer_command_status()
+    # -
+    def _sequencer_command_status(self, **kwargs):
+
+        # entry message
+        self.logger.debug("_sequencer_command_status() enter")
+
+        if self.__mgr_sequencer and self.__sequencerCommandStatusC and kwargs:
+
+            # dump dictionary
+            for k, v in kwargs.items():
+                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+
+            # get values from kwargs dictionary
+            self.__command_source = kwargs.get('CommandSource', '')
+            self.__command_sent = kwargs.get('CommandSent', '')
+            self.__identifier = kwargs.get('Identifier', ocs_id(False))
+            self.__priority = kwargs.get('priority', SAL__EVENT_INFO)
+            self.__status = kwargs.get('Status', '')
+            self.__status_value = kwargs.get('StatusValue', '')
+            self.__sequence_number = kwargs.get('SequenceNumber', '')
+            self.__timestamp = kwargs.get('Timestamp', '')
+
+            self.__match = re.search(ISO_PATTERN, self.__timestamp)
+            if not self.__match:
+                self.__timestamp = ocs_mjd_to_iso(self.__identifier)
+
+            # set up payload (cf. data = sequencer_logevent_sequencerCommandStatus() etc)
+            self.__sequencerCommandStatusC.CommandSource = str(self.__command_source)
+            self.__sequencerCommandStatusC.CommandSent = str(self.__command_sent)
+            self.__sequencerCommandStatusC.Identifier = float(self.__identifier)
+            self.__sequencerCommandStatusC.priority = int(self.__priority)
+            self.__sequencerCommandStatusC.Status = str(self.__status)
+            self.__sequencerCommandStatusC.StatusValue = int(self.__status_value)
+            self.__sequencerCommandStatusC.SequenceNumber = int(self.__sequence_number)
+            self.__sequencerCommandStatusC.Timestamp = str(self.__timestamp)
+
+            # set up event (cf. mgr.salEvent("sequencer_logevent_sequencerCommandStatus"))
+            lname = 'sequencer_logevent_{0:s}'.format(self.__event)
+            self.logger.debug("setting up for event {0:s}".format(lname))
+            self.__mgr_sequencer.salEvent(lname)
+
+            # issue event (cf. retval = mgr.logEvent_sequencerCommandStatus(data, priority))
+            self.logger.debug("issuing event {0:s}".format(lname))
+            self.__retval = self.__mgr_sequencer.logEvent_sequencerCommandStatus(
+                self.__sequencerCommandStatusC, self.__sequencerCommandStatusC.priority)
+            self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+        # exit message
+        self.logger.debug("_sequencer_command_status() exit")
 
     # +
     # decorator(s)
@@ -1063,6 +1352,12 @@ if __name__ == "__main__":
                        Timestamp=ocs_mjd_to_iso(ocsid),
                        Address=id(evh),
                        priority=SAL__EVENT_INFO)
+        evh.send_event('sequencerEntityStartup',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
 
         # send event with payload
         ocsid = ocs_id(False)
@@ -1085,6 +1380,12 @@ if __name__ == "__main__":
                        Address=id(evh),
                        priority=SAL__EVENT_INFO)
         evh.send_event('ocsEntityShutdown',
+                       Name='Junk',
+                       Identifier=float(ocsid),
+                       Timestamp=ocs_mjd_to_iso(ocsid),
+                       Address=id(evh),
+                       priority=SAL__EVENT_INFO)
+        evh.send_event('sequencerEntityShutdown',
                        Name='Junk',
                        Identifier=float(ocsid),
                        Timestamp=ocs_mjd_to_iso(ocsid),
