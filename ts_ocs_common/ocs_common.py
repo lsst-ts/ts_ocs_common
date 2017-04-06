@@ -219,7 +219,7 @@ ocsGenericEntityEntityDictionary = {
     "EMCS": ['VisibleAllSkyCamera', 'InfraRedAllSkyCamera', 'DifferentialImageMotionMonitor'],
     "OCS": ['Sequencer'],
     "SFCS": ['AirConditioning', 'PowerConditioning'],
-    "TCS": ['Mount', 'Enclosure'],
+    "TCS": ['Tcs', 'Mount', 'Enclosure'],
     "TEST": ['Test']
     }
 

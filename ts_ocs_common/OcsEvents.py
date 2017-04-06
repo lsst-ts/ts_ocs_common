@@ -358,8 +358,8 @@ class OcsEvents(object):
         if self.__mgr_archiver and self.__archiverEntitySummaryStateC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -378,7 +378,8 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = archiver_logevent_archiverEntitySummaryState() etc)
-            self.__archiverEntitySummaryStateC.Address = int(self.__address)
+            # self.__archiverEntitySummaryStateC.Address = int(self.__address)
+            self.__archiverEntitySummaryStateC.Address = int(0)
             self.__archiverEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__archiverEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__archiverEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -414,8 +415,8 @@ class OcsEvents(object):
         if self.__mgr_catchuparchiver and self.__catchuparchiverEntitySummaryStateC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -434,7 +435,8 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntitySummaryState() etc)
-            self.__catchuparchiverEntitySummaryStateC.Address = int(self.__address)
+            # self.__catchuparchiverEntitySummaryStateC.Address = int(self.__address)
+            self.__catchuparchiverEntitySummaryStateC.Address = int(0)
             self.__catchuparchiverEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__catchuparchiverEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__catchuparchiverEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -470,8 +472,8 @@ class OcsEvents(object):
         if self.__mgr_processingcluster and self.__processingclusterEntitySummaryStateC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -490,7 +492,8 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = processingcluster_logevent_processingclusterEntitySummaryState() etc)
-            self.__processingclusterEntitySummaryStateC.Address = int(self.__address)
+            # self.__processingclusterEntitySummaryStateC.Address = int(self.__address)
+            self.__processingclusterEntitySummaryStateC.Address = int(0)
             self.__processingclusterEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__processingclusterEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__processingclusterEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -526,8 +529,8 @@ class OcsEvents(object):
         if self.__mgr_ocs and self.__ocsEntitySummaryStateC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -546,7 +549,8 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = ocs_logevent_ocsEntitySummaryState() etc)
-            self.__ocsEntitySummaryStateC.Address = int(self.__address)
+            # self.__ocsEntitySummaryStateC.Address = int(self.__address)
+            self.__ocsEntitySummaryStateC.Address = int(0)
             self.__ocsEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__ocsEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__ocsEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -582,8 +586,8 @@ class OcsEvents(object):
         if self.__mgr_sequencer and self.__sequencerEntitySummaryStateC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -602,7 +606,8 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = s_logevent_sEntitySummaryState() etc)
-            self.__sequencerEntitySummaryStateC.Address = int(self.__address)
+            # self.__sequencerEntitySummaryStateC.Address = int(self.__address)
+            self.__sequencerEntitySummaryStateC.Address = int(0)
             self.__sequencerEntitySummaryStateC.CommandsAvailable = str(self.__commands)
             self.__sequencerEntitySummaryStateC.ConfigurationsAvailable = str(self.__configurations)
             self.__sequencerEntitySummaryStateC.CurrentState = str(self.__current_state)
@@ -638,8 +643,8 @@ class OcsEvents(object):
         if self.__mgr_archiver and self.__archiverEntityStartupC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -653,10 +658,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = archiver_logevent_archiverEntityStartup() etc)
+            # self.__archiverEntityStartupC.Address = int(self.__address)
+            self.__archiverEntityStartupC.Address = int(0)
             self.__archiverEntityStartupC.Name = str(self.__name)
             self.__archiverEntityStartupC.Identifier = float(self.__identifier)
             self.__archiverEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__archiverEntityStartupC.Address = int(self.__address)
             self.__archiverEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("archiver_logevent_archiverEntityStartup"))
@@ -684,8 +690,8 @@ class OcsEvents(object):
         if self.__mgr_catchuparchiver and self.__catchuparchiverEntityStartupC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -699,10 +705,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntityStartup() etc)
+            # self.__catchuparchiverEntityStartupC.Address = int(self.__address)
+            self.__catchuparchiverEntityStartupC.Address = int(0)
             self.__catchuparchiverEntityStartupC.Name = str(self.__name)
             self.__catchuparchiverEntityStartupC.Identifier = float(self.__identifier)
             self.__catchuparchiverEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__catchuparchiverEntityStartupC.Address = int(self.__address)
             self.__catchuparchiverEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("catchuparchiver_logevent_catchuparchiverEntityStartup"))
@@ -730,8 +737,8 @@ class OcsEvents(object):
         if self.__mgr_processingcluster and self.__processingclusterEntityStartupC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -745,10 +752,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = processingcluster_logevent_processingclusterEntityStartup() etc)
+            # self.__processingclusterEntityStartupC.Address = int(self.__address)
+            self.__processingclusterEntityStartupC.Address = int(0)
             self.__processingclusterEntityStartupC.Name = str(self.__name)
             self.__processingclusterEntityStartupC.Identifier = float(self.__identifier)
             self.__processingclusterEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__processingclusterEntityStartupC.Address = int(self.__address)
             self.__processingclusterEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("processingcluster_logevent_processingclusterEntityStartup"))
@@ -776,8 +784,8 @@ class OcsEvents(object):
         if self.__mgr_ocs and self.__ocsEntityStartupC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -791,10 +799,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = ocs_logevent_ocsEntityStartup() etc)
+            #self.__ocsEntityStartupC.Address = int(self.__address)
+            self.__ocsEntityStartupC.Address = int(0)
             self.__ocsEntityStartupC.Name = str(self.__name)
             self.__ocsEntityStartupC.Identifier = float(self.__identifier)
             self.__ocsEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__ocsEntityStartupC.Address = int(self.__address)
             self.__ocsEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("ocs_logevent_ocsEntityStartup"))
@@ -822,8 +831,8 @@ class OcsEvents(object):
         if self.__mgr_sequencer and self.__sequencerEntityStartupC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -837,10 +846,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = sequencer_logevent_sequencerEntityStartup() etc)
+            # self.__sequencerEntityStartupC.Address = int(self.__address)
+            self.__sequencerEntityStartupC.Address = int(0)
             self.__sequencerEntityStartupC.Name = str(self.__name)
             self.__sequencerEntityStartupC.Identifier = float(self.__identifier)
             self.__sequencerEntityStartupC.Timestamp = str(self.__timestamp)
-            self.__sequencerEntityStartupC.Address = int(self.__address)
             self.__sequencerEntityStartupC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("sequencer_logevent_sequencerEntityStartup"))
@@ -868,8 +878,8 @@ class OcsEvents(object):
         if self.__mgr_archiver and self.__archiverEntityShutdownC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -883,10 +893,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = archiver_logevent_archiverEntityShutdown() etc)
+            # self.__archiverEntityShutdownC.Address = int(self.__address)
+            self.__archiverEntityShutdownC.Address = int(0)
             self.__archiverEntityShutdownC.Name = str(self.__name)
             self.__archiverEntityShutdownC.Identifier = float(self.__identifier)
             self.__archiverEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__archiverEntityShutdownC.Address = int(self.__address)
             self.__archiverEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("archiver_logevent_archiverEntityShutdown"))
@@ -914,8 +925,8 @@ class OcsEvents(object):
         if self.__mgr_catchuparchiver and self.__catchuparchiverEntityShutdownC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -929,10 +940,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = catchuparchiver_logevent_catchuparchiverEntityShutdown() etc)
+            # self.__catchuparchiverEntityShutdownC.Address = int(self.__address)
+            self.__catchuparchiverEntityShutdownC.Address = int(0)
             self.__catchuparchiverEntityShutdownC.Name = str(self.__name)
             self.__catchuparchiverEntityShutdownC.Identifier = float(self.__identifier)
             self.__catchuparchiverEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__catchuparchiverEntityShutdownC.Address = int(self.__address)
             self.__catchuparchiverEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("catchuparchiver_logevent_catchuparchiverEntityShutdown"))
@@ -960,8 +972,8 @@ class OcsEvents(object):
         if self.__mgr_processingcluster and self.__processingclusterEntityShutdownC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -975,10 +987,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = processingcluster_logevent_processingclusterEntityShutdown() etc)
+            # self.__processingclusterEntityShutdownC.Address = int(self.__address)
+            self.__processingclusterEntityShutdownC.Address = int(0)
             self.__processingclusterEntityShutdownC.Name = str(self.__name)
             self.__processingclusterEntityShutdownC.Identifier = float(self.__identifier)
             self.__processingclusterEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__processingclusterEntityShutdownC.Address = int(self.__address)
             self.__processingclusterEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("processingcluster_logevent_processingclusterEntityShutdown"))
@@ -1006,8 +1019,8 @@ class OcsEvents(object):
         if self.__mgr_ocs and self.__ocsEntityShutdownC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -1021,10 +1034,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = ocs_logevent_ocsEntityShutdown() etc)
+            # self.__ocsEntityShutdownC.Address = int(self.__address)
+            self.__ocsEntityShutdownC.Address = int(0)
             self.__ocsEntityShutdownC.Name = str(self.__name)
             self.__ocsEntityShutdownC.Identifier = float(self.__identifier)
             self.__ocsEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__ocsEntityShutdownC.Address = int(self.__address)
             self.__ocsEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("ocs_logevent_ocsEntityShutdown"))
@@ -1052,8 +1066,8 @@ class OcsEvents(object):
         if self.__mgr_sequencer and self.__sequencerEntityShutdownC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__address = kwargs.get('Address', SAL__ERROR)
@@ -1067,10 +1081,11 @@ class OcsEvents(object):
                 self.__timestamp = ocs_mjd_to_iso(self.__identifier)
 
             # set up payload (cf. data = sequencer_logevent_sequencerEntityShutdown() etc)
+            # self.__sequencerEntityShutdownC.Address = int(self.__address)
+            self.__sequencerEntityShutdownC.Address = int(0)
             self.__sequencerEntityShutdownC.Name = str(self.__name)
             self.__sequencerEntityShutdownC.Identifier = float(self.__identifier)
             self.__sequencerEntityShutdownC.Timestamp = str(self.__timestamp)
-            self.__sequencerEntityShutdownC.Address = int(self.__address)
             self.__sequencerEntityShutdownC.priority = int(self.__priority)
 
             # set up event (cf. mgr.salEvent("sequencer_logevent_sequencerEntityShutdown"))
@@ -1098,8 +1113,8 @@ class OcsEvents(object):
         if self.__mgr_ocs and self.__ocsCommandIssuedC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__command_source = kwargs.get('CommandSource', '')
@@ -1148,8 +1163,8 @@ class OcsEvents(object):
         if self.__mgr_sequencer and self.__sequencerCommandIssuedC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__command_source = kwargs.get('CommandSource', '')
@@ -1198,8 +1213,8 @@ class OcsEvents(object):
         if self.__mgr_ocs and self.__ocsCommandStatusC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__command_source = kwargs.get('CommandSource', '')
@@ -1250,8 +1265,8 @@ class OcsEvents(object):
         if self.__mgr_sequencer and self.__sequencerCommandStatusC and kwargs:
 
             # dump dictionary
-            for k, v in kwargs.items():
-                self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
+            #for k, v in kwargs.items():
+            #    self.logger.debug("{0:s}={1:s}".format(str(k), str(v)))
 
             # get values from kwargs dictionary
             self.__command_source = kwargs.get('CommandSource', '')
