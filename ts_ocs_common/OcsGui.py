@@ -11,6 +11,7 @@ from Tkinter import *
 # noinspection PyCompatibility
 from tkMessageBox import *
 
+import logging
 
 # +
 # __doc__ string
@@ -43,6 +44,10 @@ API:
     OcsQuitButton(Frame)
         this class contains the single method 'quit' which produces a Quit button with a verification dialog widget
 
+    OcsTextHandler(logging.Handler)
+        this class provides support for sending logger outputs to a text handler within the main GUI frame. See an
+        example in $TS_OCS_SEQUENCER_SRC/OcsGenericSequencerGui.py
+    
 CLI:
 
     [pnd@localhost ts_ocs_common]$ python OcsGui.py --help
@@ -69,6 +74,32 @@ __email__ = "pdaly@lsst.org"
 __file__ = "OcsGui.py"
 __history__ = __date__ + ": " + "original version (" + __email__ + ")"
 __version__ = "0.1.0"
+
+
+# +
+# class: OcsTextHandler() inherits from logging.Handler
+# -
+class OcsTextHandler(logging.Handler):
+
+    # +
+    # method: __init__
+    # -
+    def __init__(self, text):
+        logging.Handler.__init__(self)
+        self.text = text
+
+    # +
+    # method: emit()
+    # -
+    def emit(self, record):
+        msg = self.format(record)
+        def append():
+            self.text.configure(state='normal')
+            self.text.insert(END, msg + '\n')
+            self.text.configure(state='disabled')
+            self.text.yview(END)
+        # necessary because we can't modify the Text from other threads
+        self.text.after(0, append)
 
 
 # +
