@@ -3,7 +3,7 @@
 # +
 # NB: Edit the location of the SAL_defines.h input file!!
 # -
-SAL_DEFINE_H="/usr/local/ts_sal/lsstsal/include/SAL_defines.h"
+SAL_DEFINE_H="${LSST_SDK_INSTALL}/lsstsal/include/SAL_defines.h"
 
 # +
 # Create the file $TS_OCS_COMMON_SRC/ocs_sal_constants.py
