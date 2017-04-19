@@ -273,6 +273,15 @@ ocsEntitySummaryStateConfigurations = {
     OCS_SUMMARY_STATE_UNKNOWN: []
     }
 
+OcsSummaryStateEnum = {
+    'disable': 0,
+    'enable': 1,
+    'fault': 2,
+    'offline': 3,
+    'standby': 4,
+    'unknown': -1
+    }
+
 
 # +
 # format(s)

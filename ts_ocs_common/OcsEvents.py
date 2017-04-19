@@ -126,6 +126,7 @@ class OcsEvents(object):
         self.__processingclusterEntitySummaryStateC = None
         self.__ocsEntitySummaryStateC = None
         self.__sequencerEntitySummaryStateC = None
+        self.__SummaryStateC = None
 
         self.__archiverEntityStartupC = None
         self.__catchuparchiverEntityStartupC = None
@@ -254,6 +255,8 @@ class OcsEvents(object):
             self.__sal_ocs, 'ocs_logevent_ocsEntitySummaryStateC')
         self.__sequencerEntitySummaryStateC = self._get_sal_log_c(
             self.__sal_sequencer, 'sequencer_logevent_sequencerEntitySummaryStateC')
+        self.__SummaryStateC = self._get_sal_log_c(
+            self.__sal_sequencer, 'sequencer_logevent_SummaryStateC')
 
         self.__archiverEntityStartupC = self._get_sal_log_c(
             self.__sal_archiver, 'archiver_logevent_archiverEntityStartupC')
@@ -628,6 +631,26 @@ class OcsEvents(object):
             self.__retval = self.__mgr_sequencer.logEvent_sequencerEntitySummaryState(
                 self.__sequencerEntitySummaryStateC, self.__sequencerEntitySummaryStateC.priority)
             self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
+
+            # default summary state
+            if self.__SummaryStateC:
+
+                # set default summary state
+                self.__SummaryStateC.SummaryStateValue = OcsSummaryStateEnum.get(self.__current_state.lower(),-1)
+                self.logger.debug("SummaryStateValue = {0:d}".format(self.__SummaryStateC.SummaryStateValue))
+                self.__SummaryStateC.priority = int(self.__priority)
+                self.logger.debug("SummaryStatePriority = {0:d}".format(self.__SummaryStateC.priority))
+
+                # set up event (cf. mgr.salEvent("sequencer_logevent_SummaryState"))
+                lname = 'sequencer_logevent_SummaryState'
+                self.logger.debug("setting up for event {0:s}".format(lname))
+                self.__mgr_sequencer.salEvent(lname)
+
+                # issue event (cf. retval = mgr.logEvent_SummaryState(data, priority))
+                self.logger.debug("issuing event {0:s}".format(lname))
+                self.__retval = self.__mgr_sequencer.logEvent_SummaryState(
+                    self.__SummaryStateC, self.__SummaryStateC.priority)
+                self.logger.debug("issued event {0:s}, retval={1:d}".format(lname, self.__retval))
 
         # exit message
         self.logger.debug("_sequencer_entity_summary_state() exit")
